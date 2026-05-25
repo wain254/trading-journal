@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TradeJournal - Fixed Layout | Cloud Sync</title>
+    <title>TradeJournal - Fixed Cloud Save</title>
     <style>
         * {
             box-sizing: border-box;
@@ -287,7 +287,7 @@
             color: #facc15;
         }
 
-        /* Main App - FIXED LAYOUT */
+        /* Main App */
         .main-app {
             display: none;
         }
@@ -389,7 +389,6 @@
         .day-pnl.positive { color: #4ade80; }
         .day-pnl.negative { color: #f87171; }
 
-        /* FIXED: Trade Entry and History Layout */
         .trade-section {
             display: flex;
             gap: 24px;
@@ -464,7 +463,6 @@
 
         .delete-btn:hover {
             background: #dc2626;
-            transform: translateY(-2px);
         }
 
         .logout-btn {
@@ -487,7 +485,6 @@
             border-bottom: 1px solid rgba(51, 65, 85, 0.5);
         }
 
-        /* Footer - FIXED SEPARATE SECTION */
         .footer {
             margin-top: 40px;
             background: rgba(15, 23, 42, 0.6);
@@ -516,7 +513,6 @@
         .footer-card h3 {
             color: #facc15;
             margin-bottom: 15px;
-            font-size: 1.1rem;
         }
 
         .featured-broker {
@@ -549,12 +545,6 @@
             font-weight: bold;
             color: #facc15;
             font-size: 1.2rem;
-        }
-
-        .broker-rating {
-            color: #facc15;
-            font-size: 0.9rem;
-            margin: 5px 0;
         }
 
         .open-account-btn {
@@ -592,7 +582,6 @@
 
         .review-stars {
             color: #facc15;
-            margin-bottom: 5px;
         }
 
         .whatsapp-contact {
@@ -659,7 +648,7 @@
     <!-- MAIN APP -->
     <div id="mainApp" class="main-app">
         <div class="header">
-            <h1>📒 Trade Journal <small>☁️ Instant Cloud Sync</small></h1>
+            <h1>📒 Trade Journal <small>☁️ Cloud Sync</small></h1>
             <div class="profile-section">
                 <div class="profile-trigger" id="profileTrigger">
                     <div class="profile-avatar" id="profileAvatar">👤</div>
@@ -722,9 +711,8 @@
             <div id="dayDetailPanel" style="display:none; background:rgba(15,23,42,0.8); border-radius:16px; padding:16px; margin-top:16px;"></div>
         </div>
 
-        <!-- FIXED: Trade Form and Trade History - SEPARATE SECTIONS -->
+        <!-- Trade Form and History -->
         <div class="trade-section">
-            <!-- Left: Trade Entry Form -->
             <div class="trade-form">
                 <h3>✍️ Log New Trade</h3>
                 <div class="form-group"><label>📅 Date & Time</label><input type="datetime-local" id="tradeDate"></div>
@@ -740,22 +728,12 @@
                 <button id="resetUserDataBtn" style="background:#334155;">🗑️ Delete All Trades</button>
             </div>
 
-            <!-- Right: Trade History Table -->
             <div class="trade-history">
                 <h3>📋 Trade History</h3>
                 <div style="overflow-x: auto;">
                     <table id="tradesTable">
                         <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Symbol</th>
-                                <th>Dir</th>
-                                <th>Entry/Exit</th>
-                                <th>P&L</th>
-                                <th>Rules</th>
-                                <th>Adherence</th>
-                                <th>Action</th>
-                            </tr>
+                            <tr><th>Date</th><th>Symbol</th><th>Dir</th><th>Entry/Exit</th><th>P&L</th><th>Rules</th><th>Adherence</th><th>Action</th></tr>
                         </thead>
                         <tbody id="tradesBody">
                             <tr><td colspan="8" style="text-align:center">Loading trades from cloud...</td></tr>
@@ -765,37 +743,28 @@
             </div>
         </div>
 
-        <!-- Footer - SEPARATE SECTION with Preferred Broker -->
+        <!-- Footer -->
         <div class="footer">
             <div class="footer-grid">
-                <!-- Forex eBooks -->
                 <div class="footer-card">
                     <h3>📚 Free Forex eBooks</h3>
                     <ul class="ebook-list">
                         <li>📖 <a href="https://www.babypips.com/learn/forex" target="_blank">BabyPips - School of Pipsology</a></li>
                         <li>📘 <a href="https://www.investopedia.com/articles/forex/11/forex-trading-ebook.asp" target="_blank">Investopedia Forex Guide</a></li>
                         <li>📕 <a href="https://www.dailyfx.com/education/ebooks" target="_blank">DailyFX eBooks</a></li>
-                        <li>📗 <a href="https://www.forex.com/en-us/education/ebooks/" target="_blank">Forex.com Library</a></li>
                     </ul>
                 </div>
 
-                <!-- Preferred Broker - STANDALONE -->
                 <div class="footer-card">
                     <h3>🏆 Preferred Broker</h3>
                     <div class="featured-broker" onclick="window.open('http://live.ofinancial.markets/signup/faT4NlLK', '_blank')">
                         <div class="broker-logo">🏦</div>
                         <div class="broker-name">OFinancial Markets</div>
                         <div class="broker-rating">★★★★★ 5.0/5</div>
-                        <div class="broker-features" style="font-size:0.75rem; margin:8px 0;">
-                            ✓ Low Spreads<br>
-                            ✓ Fast Execution<br>
-                            ✓ Regulated Broker
-                        </div>
                         <div class="open-account-btn">👉 OPEN ACCOUNT 👈</div>
                     </div>
                 </div>
 
-                <!-- Reviews & WhatsApp -->
                 <div class="footer-card">
                     <h3>⭐ Trader Reviews</h3>
                     <div class="review-item">
@@ -808,16 +777,11 @@
                         <div>"Love the pip calculator and calendar view."</div>
                         <small>- Sarah K.</small>
                     </div>
-                    <div class="review-item">
-                        <div class="review-stars">★★★★★</div>
-                        <div>"Finally a journal that holds me accountable!"</div>
-                        <small>- David R.</small>
-                    </div>
                     <a href="https://wa.me/message/KGIKY7FHNWFWE1" target="_blank" class="whatsapp-contact">💬 Contact Us on WhatsApp</a>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>© 2026 TradeJournal - Instant Cloud Sync | <a href="http://live.ofinancial.markets/signup/faT4NlLK" target="_blank" style="color:#facc15;">Trade with OFinancial Markets</a></p>
+                <p>© 2026 TradeJournal - Cloud Sync | <a href="http://live.ofinancial.markets/signup/faT4NlLK" target="_blank" style="color:#facc15;">Trade with OFinancial Markets</a></p>
             </div>
         </div>
     </div>
@@ -855,15 +819,18 @@
         }
     });
 
-    // Cloud API Functions
+    // CLOUD API FUNCTIONS
     async function cloudRegister(username, password) {
         const hashedPassword = hashPassword(password);
         const url = `${WEB_APP_URL}?action=register&username=${encodeURIComponent(username)}&password=${encodeURIComponent(hashedPassword)}`;
         try {
             const response = await fetch(url);
-            return await response.json();
+            const data = await response.json();
+            console.log('Register response:', data);
+            return data;
         } catch (error) {
-            return { success: false, error: 'Network error' };
+            console.error('Register error:', error);
+            return { success: false, error: 'Network error: ' + error.message };
         }
     }
 
@@ -872,9 +839,12 @@
         const url = `${WEB_APP_URL}?action=login&username=${encodeURIComponent(username)}&password=${encodeURIComponent(hashedPassword)}`;
         try {
             const response = await fetch(url);
-            return await response.json();
+            const data = await response.json();
+            console.log('Login response:', data);
+            return data;
         } catch (error) {
-            return { success: false, error: 'Network error' };
+            console.error('Login error:', error);
+            return { success: false, error: 'Network error: ' + error.message };
         }
     }
 
@@ -883,8 +853,10 @@
         try {
             const response = await fetch(url);
             const data = await response.json();
+            console.log('Get trades response:', data);
             return data.trades || [];
         } catch (error) {
+            console.error('Get trades error:', error);
             return [];
         }
     }
@@ -892,14 +864,17 @@
     async function cloudSaveTrades(username, trades) {
         const url = `${WEB_APP_URL}?action=saveTrades`;
         try {
-            await fetch(url, {
+            console.log('Saving trades to cloud:', trades.length, 'trades');
+            const response = await fetch(url, {
                 method: 'POST',
-                mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username: username, trades: trades })
             });
-            return true;
+            const result = await response.json();
+            console.log('Save response:', result);
+            return result.success || true;
         } catch (error) {
+            console.error('Save trades error:', error);
             return false;
         }
     }
@@ -1039,9 +1014,13 @@
             btn.addEventListener('click', async (e) => {
                 const id = parseInt(btn.dataset.id);
                 currentUserTrades = currentUserTrades.filter(t => t.id !== id);
-                await cloudSaveTrades(currentUser, currentUserTrades);
-                renderAll();
-                alert('✅ Trade deleted and synced to cloud!');
+                const saved = await cloudSaveTrades(currentUser, currentUserTrades);
+                if(saved) {
+                    renderAll();
+                    alert('✅ Trade deleted and synced to cloud!');
+                } else {
+                    alert('❌ Failed to delete trade. Check your connection.');
+                }
             });
         });
     }
@@ -1067,13 +1046,24 @@
         const ruleChecks = {};
         RULES_LIST.forEach(r => { ruleChecks[r.id] = document.getElementById(r.id).checked; });
         const newTrade = { id: Date.now(), date, symbol, direction, entry, exit, size, pnl, ruleChecks };
+        
+        // Add to local array
         currentUserTrades.unshift(newTrade);
-        await cloudSaveTrades(currentUser, currentUserTrades);
-        renderAll();
-        document.getElementById('pnl').value = '';
-        document.getElementById('entryPrice').value = '';
-        document.getElementById('exitPrice').value = '';
-        alert('✅ Trade added and synced to cloud!');
+        
+        // SAVE TO CLOUD IMMEDIATELY
+        const saved = await cloudSaveTrades(currentUser, currentUserTrades);
+        
+        if(saved) {
+            renderAll();
+            document.getElementById('pnl').value = '';
+            document.getElementById('entryPrice').value = '';
+            document.getElementById('exitPrice').value = '';
+            alert('✅ Trade added and SAVED TO CLOUD! It will appear on all your devices.');
+        } else {
+            // Revert if save failed
+            currentUserTrades = currentUserTrades.filter(t => t.id !== newTrade.id);
+            alert('❌ Failed to save trade to cloud. Check your internet connection.');
+        }
     }
 
     function calculatePositionSize() {
@@ -1150,6 +1140,8 @@
         currentUser = username;
         loadingDiv.innerHTML = '📥 Loading your trades from cloud...';
         currentUserTrades = await cloudGetTrades(username);
+        
+        console.log('Loaded trades:', currentUserTrades.length);
 
         loadingDiv.style.display = 'none';
         hideAuthOverlay();
@@ -1199,9 +1191,13 @@
     document.getElementById('resetUserDataBtn').addEventListener('click', async () => {
         if (confirm('⚠️ Delete ALL your trades? This cannot be undone!')) {
             currentUserTrades = [];
-            await cloudSaveTrades(currentUser, currentUserTrades);
-            renderAll();
-            alert('All trades deleted and synced to cloud');
+            const saved = await cloudSaveTrades(currentUser, currentUserTrades);
+            if(saved) {
+                renderAll();
+                alert('All trades deleted and synced to cloud');
+            } else {
+                alert('Failed to delete trades');
+            }
         }
     });
     document.getElementById('prevMonthBtn').addEventListener('click', () => { currentViewDate.setMonth(currentViewDate.getMonth() - 1); renderCalendar(); });
