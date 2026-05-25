@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TradeJournal - Fixed Password Toggle</title>
+    <title>TradeJournal - Fixed Layout | Cloud Sync</title>
     <style>
         * {
             box-sizing: border-box;
@@ -73,7 +73,6 @@
             color: #cbd5e1;
         }
 
-        /* Fixed Password Field */
         .password-field {
             position: relative;
             width: 100%;
@@ -87,7 +86,6 @@
             border-radius: 16px;
             color: white;
             font-size: 1rem;
-            transition: all 0.3s;
         }
 
         .password-field input:focus {
@@ -120,7 +118,6 @@
         .password-toggle:hover {
             color: #facc15;
             background: rgba(250, 204, 21, 0.1);
-            transform: translateY(-50%) scale(1.1);
         }
 
         .auth-switch {
@@ -128,11 +125,6 @@
             margin-top: 20px;
             color: #94a3b8;
             cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .auth-switch:hover {
-            transform: translateY(-2px);
         }
 
         .auth-switch span {
@@ -146,7 +138,6 @@
             border-radius: 16px;
             margin: 15px 0;
             text-align: center;
-            font-size: 0.85rem;
         }
 
         .loading-msg {
@@ -155,7 +146,6 @@
             border-radius: 16px;
             margin: 15px 0;
             text-align: center;
-            font-size: 0.85rem;
             color: #facc15;
         }
 
@@ -166,7 +156,6 @@
             border-radius: 16px;
             margin: 15px 0;
             text-align: center;
-            font-size: 0.85rem;
             color: #4ade80;
         }
 
@@ -227,14 +216,8 @@
         }
 
         @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .dropdown-header {
@@ -304,7 +287,7 @@
             color: #facc15;
         }
 
-        /* Main App */
+        /* Main App - FIXED LAYOUT */
         .main-app {
             display: none;
         }
@@ -403,40 +386,37 @@
             margin-bottom: 8px;
         }
 
-        .day-pnl.positive {
-            color: #4ade80;
-        }
+        .day-pnl.positive { color: #4ade80; }
+        .day-pnl.negative { color: #f87171; }
 
-        .day-pnl.negative {
-            color: #f87171;
-        }
-
-        .two-columns {
+        /* FIXED: Trade Entry and History Layout */
+        .trade-section {
             display: flex;
             gap: 24px;
             flex-wrap: wrap;
             margin-bottom: 30px;
         }
 
-        .form-panel,
-        .trades-panel {
+        .trade-form {
+            flex: 1;
+            min-width: 300px;
             background: rgba(30, 41, 59, 0.7);
             backdrop-filter: blur(10px);
             border-radius: 24px;
             padding: 20px;
         }
 
-        .form-panel {
-            flex: 1.2;
-        }
-
-        .trades-panel {
+        .trade-history {
             flex: 2;
+            min-width: 400px;
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 20px;
             overflow-x: auto;
         }
 
-        input,
-        select {
+        input, select {
             width: 100%;
             padding: 10px 12px;
             background: rgba(15, 23, 42, 0.7);
@@ -482,6 +462,11 @@
             margin: 0;
         }
 
+        .delete-btn:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
         .logout-btn {
             background: #ef4444;
             padding: 6px 16px;
@@ -496,13 +481,13 @@
             font-size: 0.8rem;
         }
 
-        th,
-        td {
+        th, td {
             text-align: left;
             padding: 10px 6px;
             border-bottom: 1px solid rgba(51, 65, 85, 0.5);
         }
 
+        /* Footer - FIXED SEPARATE SECTION */
         .footer {
             margin-top: 40px;
             background: rgba(15, 23, 42, 0.6);
@@ -513,7 +498,7 @@
 
         .footer-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 25px;
         }
 
@@ -531,6 +516,7 @@
         .footer-card h3 {
             color: #facc15;
             margin-bottom: 15px;
+            font-size: 1.1rem;
         }
 
         .featured-broker {
@@ -540,6 +526,11 @@
             padding: 15px;
             text-align: center;
             cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .featured-broker:hover {
+            transform: scale(1.02);
         }
 
         .broker-logo {
@@ -558,6 +549,22 @@
             font-weight: bold;
             color: #facc15;
             font-size: 1.2rem;
+        }
+
+        .broker-rating {
+            color: #facc15;
+            font-size: 0.9rem;
+            margin: 5px 0;
+        }
+
+        .open-account-btn {
+            background: #facc15;
+            color: #0f172a;
+            padding: 8px 20px;
+            border-radius: 40px;
+            display: inline-block;
+            margin-top: 10px;
+            font-weight: bold;
         }
 
         .ebook-list {
@@ -585,6 +592,7 @@
 
         .review-stars {
             color: #facc15;
+            margin-bottom: 5px;
         }
 
         .whatsapp-contact {
@@ -612,15 +620,9 @@
         }
 
         @media (max-width: 900px) {
-            .calendar-day {
-                min-height: 70px;
-                padding: 5px;
-            }
-
-            .dropdown-menu {
-                width: 95vw;
-                right: -10px;
-            }
+            .calendar-day { min-height: 70px; padding: 5px; }
+            .dropdown-menu { width: 95vw; right: -10px; }
+            .trade-form, .trade-history { min-width: 100%; }
         }
     </style>
 </head>
@@ -654,7 +656,7 @@
         </div>
     </div>
 
-    <!-- MAIN APP (same as before) -->
+    <!-- MAIN APP -->
     <div id="mainApp" class="main-app">
         <div class="header">
             <h1>📒 Trade Journal <small>☁️ Instant Cloud Sync</small></h1>
@@ -697,6 +699,7 @@
             </div>
         </div>
 
+        <!-- Dashboard Stats -->
         <div class="dashboard">
             <div class="card"><h3>📊 Total Trades</h3><div class="value" id="totalTrades">0</div></div>
             <div class="card"><h3>✅ Avg. Consistency</h3><div class="value" id="avgConsistency">0%</div></div>
@@ -706,6 +709,7 @@
             <div class="card"><h3>📅 Best Day</h3><div class="value" id="bestDay">-</div></div>
         </div>
 
+        <!-- Calendar Section -->
         <div class="calendar-section">
             <div class="calendar-header" style="display:flex; justify-content:space-between; margin-bottom:20px;">
                 <div class="calendar-nav">
@@ -718,24 +722,28 @@
             <div id="dayDetailPanel" style="display:none; background:rgba(15,23,42,0.8); border-radius:16px; padding:16px; margin-top:16px;"></div>
         </div>
 
-        <div class="two-columns">
-            <div class="form-panel">
+        <!-- FIXED: Trade Form and Trade History - SEPARATE SECTIONS -->
+        <div class="trade-section">
+            <!-- Left: Trade Entry Form -->
+            <div class="trade-form">
                 <h3>✍️ Log New Trade</h3>
                 <div class="form-group"><label>📅 Date & Time</label><input type="datetime-local" id="tradeDate"></div>
                 <div class="form-group"><label>🏷️ Symbol</label><input type="text" id="symbol" placeholder="EUR/USD" value="EUR/USD"></div>
                 <div class="form-group"><label>⬆️ Direction</label><select id="direction"><option>Long (Buy)</option><option>Short (Sell)</option></select></div>
-                <div class="form-group"><label>💰 Entry Price</label><input type="number" step="any" id="entryPrice"></div>
-                <div class="form-group"><label>💸 Exit Price</label><input type="number" step="any" id="exitPrice"></div>
-                <div class="form-group"><label>📏 Position Size</label><input type="number" step="any" id="size"></div>
-                <div class="form-group"><label>📉 P&L ($)</label><input type="number" step="any" id="pnl"></div>
+                <div class="form-group"><label>💰 Entry Price</label><input type="number" step="any" id="entryPrice" placeholder="0.0000"></div>
+                <div class="form-group"><label>💸 Exit Price</label><input type="number" step="any" id="exitPrice" placeholder="0.0000"></div>
+                <div class="form-group"><label>📏 Position Size</label><input type="number" step="any" id="size" placeholder="0.01"></div>
+                <div class="form-group"><label>📉 P&L ($)</label><input type="number" step="any" id="pnl" placeholder="0.00"></div>
                 <h4>⚖️ Consistency Rules</h4>
                 <div id="rulesContainer"></div>
                 <button id="addTradeBtn">➕ Add Trade</button>
                 <button id="resetUserDataBtn" style="background:#334155;">🗑️ Delete All Trades</button>
             </div>
-            <div class="trades-panel">
+
+            <!-- Right: Trade History Table -->
+            <div class="trade-history">
                 <h3>📋 Trade History</h3>
-                <div style="overflow-x:auto;">
+                <div style="overflow-x: auto;">
                     <table id="tradesTable">
                         <thead>
                             <tr>
@@ -750,34 +758,44 @@
                             </tr>
                         </thead>
                         <tbody id="tradesBody">
-                            <tr>
-                                <td colspan="8">Loading trades from cloud...</td>
-                            </tr>
+                            <tr><td colspan="8" style="text-align:center">Loading trades from cloud...</td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
 
+        <!-- Footer - SEPARATE SECTION with Preferred Broker -->
         <div class="footer">
             <div class="footer-grid">
+                <!-- Forex eBooks -->
                 <div class="footer-card">
                     <h3>📚 Free Forex eBooks</h3>
                     <ul class="ebook-list">
                         <li>📖 <a href="https://www.babypips.com/learn/forex" target="_blank">BabyPips - School of Pipsology</a></li>
                         <li>📘 <a href="https://www.investopedia.com/articles/forex/11/forex-trading-ebook.asp" target="_blank">Investopedia Forex Guide</a></li>
                         <li>📕 <a href="https://www.dailyfx.com/education/ebooks" target="_blank">DailyFX eBooks</a></li>
+                        <li>📗 <a href="https://www.forex.com/en-us/education/ebooks/" target="_blank">Forex.com Library</a></li>
                     </ul>
                 </div>
-                <div class="footer-card" onclick="window.open('http://live.ofinancial.markets/signup/faT4NlLK', '_blank')">
+
+                <!-- Preferred Broker - STANDALONE -->
+                <div class="footer-card">
                     <h3>🏆 Preferred Broker</h3>
-                    <div class="featured-broker">
+                    <div class="featured-broker" onclick="window.open('http://live.ofinancial.markets/signup/faT4NlLK', '_blank')">
                         <div class="broker-logo">🏦</div>
                         <div class="broker-name">OFinancial Markets</div>
                         <div class="broker-rating">★★★★★ 5.0/5</div>
-                        <div class="open-account-btn" style="background:#facc15; padding:8px 20px; border-radius:40px; display:inline-block; margin-top:10px;">👉 OPEN ACCOUNT 👈</div>
+                        <div class="broker-features" style="font-size:0.75rem; margin:8px 0;">
+                            ✓ Low Spreads<br>
+                            ✓ Fast Execution<br>
+                            ✓ Regulated Broker
+                        </div>
+                        <div class="open-account-btn">👉 OPEN ACCOUNT 👈</div>
                     </div>
                 </div>
+
+                <!-- Reviews & WhatsApp -->
                 <div class="footer-card">
                     <h3>⭐ Trader Reviews</h3>
                     <div class="review-item">
@@ -789,6 +807,11 @@
                         <div class="review-stars">★★★★½</div>
                         <div>"Love the pip calculator and calendar view."</div>
                         <small>- Sarah K.</small>
+                    </div>
+                    <div class="review-item">
+                        <div class="review-stars">★★★★★</div>
+                        <div>"Finally a journal that holds me accountable!"</div>
+                        <small>- David R.</small>
                     </div>
                     <a href="https://wa.me/message/KGIKY7FHNWFWE1" target="_blank" class="whatsapp-contact">💬 Contact Us on WhatsApp</a>
                 </div>
@@ -813,11 +836,10 @@
         return btoa(pwd + "trading2024secure");
     }
 
-    // Fixed Password Toggle - Using event listener instead of inline onclick
+    // Password Toggle
     document.addEventListener('DOMContentLoaded', function() {
         const toggleBtn = document.getElementById('togglePasswordBtn');
         const passwordInput = document.getElementById('loginPassword');
-        
         if(toggleBtn && passwordInput) {
             toggleBtn.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -833,6 +855,7 @@
         }
     });
 
+    // Cloud API Functions
     async function cloudRegister(username, password) {
         const hashedPassword = hashPassword(password);
         const url = `${WEB_APP_URL}?action=register&username=${encodeURIComponent(username)}&password=${encodeURIComponent(hashedPassword)}`;
@@ -881,30 +904,13 @@
         }
     }
 
-    const RULES_LIST = [{
-            id: "rule_entry",
-            text: "Followed entry criteria"
-        },
-        {
-            id: "rule_sl",
-            text: "Set Stop Loss / TP before entry"
-        },
-        {
-            id: "rule_size",
-            text: "Respected max position size"
-        },
-        {
-            id: "rule_hours",
-            text: "Traded within allowed hours"
-        },
-        {
-            id: "rule_emotion",
-            text: "No revenge/emotional trading"
-        },
-        {
-            id: "rule_break",
-            text: "Took mandatory breaks"
-        }
+    const RULES_LIST = [
+        { id: "rule_entry", text: "Followed entry criteria" },
+        { id: "rule_sl", text: "Set Stop Loss / TP before entry" },
+        { id: "rule_size", text: "Respected max position size" },
+        { id: "rule_hours", text: "Traded within allowed hours" },
+        { id: "rule_emotion", text: "No revenge/emotional trading" },
+        { id: "rule_break", text: "Took mandatory breaks" }
     ];
 
     function calculateAdherence(ruleChecks) {
@@ -927,17 +933,9 @@
         }
         let bestDay = '-';
         const daily = {};
-        trades.forEach(t => {
-            const d = t.date.split('T')[0];
-            daily[d] = (daily[d] || 0) + Number(t.pnl);
-        });
+        trades.forEach(t => { const d = t.date.split('T')[0]; daily[d] = (daily[d] || 0) + Number(t.pnl); });
         let best = -Infinity;
-        for (let d in daily) {
-            if (daily[d] > best) {
-                best = daily[d];
-                bestDay = d.split('-').slice(1).join('/') + ': +$' + best.toFixed(0);
-            }
-        }
+        for (let d in daily) { if (daily[d] > best) { best = daily[d]; bestDay = d.split('-').slice(1).join('/') + ': +$' + best.toFixed(0); } }
 
         document.getElementById("totalTrades").innerText = total;
         document.getElementById("avgConsistency").innerText = avgConsistency + "%";
@@ -977,9 +975,7 @@
         document.getElementById('currentMonth').innerText = `${monthNames[month]} ${year}`;
 
         let html = '';
-        ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(d => {
-            html += `<div class="calendar-weekday">${d}</div>`;
-        });
+        ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(d => { html += `<div class="calendar-weekday">${d}</div>`; });
 
         let day = 1;
         for (let i = 0; i < 42; i++) {
@@ -1021,7 +1017,7 @@
         const trades = currentUserTrades;
         const tbody = document.getElementById('tradesBody');
         if (!trades.length) {
-            tbody.innerHTML = '<tr><td colspan="8">No trades yet. Add your first trade!</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center">No trades yet. Add your first trade!</td></tr>';
             return;
         }
         tbody.innerHTML = '';
@@ -1060,35 +1056,17 @@
 
     async function addTrade() {
         const date = document.getElementById('tradeDate').value;
-        if (!date) {
-            alert('Select date');
-            return;
-        }
+        if (!date) { alert('Select date'); return; }
         const symbol = document.getElementById('symbol').value;
         const direction = document.getElementById('direction').value;
         const entry = parseFloat(document.getElementById('entryPrice').value);
         const exit = parseFloat(document.getElementById('exitPrice').value);
         const size = parseFloat(document.getElementById('size').value);
         const pnl = parseFloat(document.getElementById('pnl').value);
-        if (isNaN(entry) || isNaN(exit) || isNaN(size) || isNaN(pnl)) {
-            alert('Fill all fields');
-            return;
-        }
+        if (isNaN(entry) || isNaN(exit) || isNaN(size) || isNaN(pnl)) { alert('Fill all fields'); return; }
         const ruleChecks = {};
-        RULES_LIST.forEach(r => {
-            ruleChecks[r.id] = document.getElementById(r.id).checked;
-        });
-        const newTrade = {
-            id: Date.now(),
-            date,
-            symbol,
-            direction,
-            entry,
-            exit,
-            size,
-            pnl,
-            ruleChecks
-        };
+        RULES_LIST.forEach(r => { ruleChecks[r.id] = document.getElementById(r.id).checked; });
+        const newTrade = { id: Date.now(), date, symbol, direction, entry, exit, size, pnl, ruleChecks };
         currentUserTrades.unshift(newTrade);
         await cloudSaveTrades(currentUser, currentUserTrades);
         renderAll();
@@ -1120,13 +1098,8 @@
 
     let authMode = 'login';
 
-    function showAuthOverlay() {
-        document.getElementById('authOverlay').classList.add('active');
-    }
-
-    function hideAuthOverlay() {
-        document.getElementById('authOverlay').classList.remove('active');
-    }
+    function showAuthOverlay() { document.getElementById('authOverlay').classList.add('active'); }
+    function hideAuthOverlay() { document.getElementById('authOverlay').classList.remove('active'); }
 
     function switchAuthMode() {
         authMode = authMode === 'login' ? 'register' : 'login';
@@ -1175,7 +1148,6 @@
         }
 
         currentUser = username;
-
         loadingDiv.innerHTML = '📥 Loading your trades from cloud...';
         currentUserTrades = await cloudGetTrades(username);
 
@@ -1210,6 +1182,7 @@
         showAuthOverlay();
     }
 
+    // Event Listeners
     document.getElementById('profileTrigger').addEventListener('click', () => {
         document.getElementById('dropdownMenu').classList.toggle('show');
     });
@@ -1231,14 +1204,8 @@
             alert('All trades deleted and synced to cloud');
         }
     });
-    document.getElementById('prevMonthBtn').addEventListener('click', () => {
-        currentViewDate.setMonth(currentViewDate.getMonth() - 1);
-        renderCalendar();
-    });
-    document.getElementById('nextMonthBtn').addEventListener('click', () => {
-        currentViewDate.setMonth(currentViewDate.getMonth() + 1);
-        renderCalendar();
-    });
+    document.getElementById('prevMonthBtn').addEventListener('click', () => { currentViewDate.setMonth(currentViewDate.getMonth() - 1); renderCalendar(); });
+    document.getElementById('nextMonthBtn').addEventListener('click', () => { currentViewDate.setMonth(currentViewDate.getMonth() + 1); renderCalendar(); });
     document.getElementById('calculateRiskBtn').addEventListener('click', calculatePositionSize);
     document.getElementById('calculatePipBtn').addEventListener('click', calculatePipValue);
 
