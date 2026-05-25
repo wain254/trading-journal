@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trading Journal - With OFinancial Markets</title>
+    <title>Trading Journal - Auto Cloud Backup</title>
     <style>
         * {
             box-sizing: border-box;
@@ -161,14 +161,14 @@
             top: 100%;
             right: 0;
             margin-top: 10px;
-            width: 380px;
+            width: 400px;
             background: rgba(30, 41, 59, 0.95);
             backdrop-filter: blur(20px);
             border-radius: 20px;
             border: 1px solid rgba(250, 204, 21, 0.3);
             z-index: 100;
             display: none;
-            max-height: 80vh;
+            max-height: 85vh;
             overflow-y: auto;
             animation: slideDown 0.3s ease;
         }
@@ -253,6 +253,46 @@
             text-align: center;
             font-weight: bold;
             color: #facc15;
+        }
+
+        /* Cloud Backup Styles */
+        .cloud-status {
+            background: rgba(74, 222, 128, 0.1);
+            border: 1px solid #4ade80;
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 12px;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+
+        .cloud-status.syncing {
+            background: rgba(250, 204, 21, 0.1);
+            border-color: #facc15;
+        }
+
+        .cloud-status.error {
+            background: rgba(248, 113, 113, 0.1);
+            border-color: #f87171;
+        }
+
+        .backup-code-input {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .backup-code-input input {
+            flex: 2;
+            padding: 8px;
+            font-size: 0.8rem;
+        }
+        
+        .backup-code-input button {
+            flex: 1;
+            margin: 0;
+            padding: 8px;
+            font-size: 0.8rem;
         }
 
         /* Main App */
@@ -409,6 +449,9 @@
             transform: translateY(-3px);
         }
 
+        .form-panel { flex: 1.2; }
+        .trades-panel { flex: 2; overflow-x: auto; }
+
         input, select {
             width: 100%;
             padding: 10px 12px;
@@ -454,18 +497,12 @@
             width: 100%;
             margin-top: 8px;
             transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
         }
 
         button:hover {
             background: #eab308;
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(250, 204, 21, 0.3);
-        }
-
-        button:active {
-            transform: translateY(0);
         }
 
         .delete-btn {
@@ -501,7 +538,7 @@
             border-bottom: 1px solid rgba(51, 65, 85, 0.5);
         }
 
-        /* FOOTER STYLES */
+        /* Footer */
         .footer {
             margin-top: 40px;
             background: rgba(15, 23, 42, 0.6);
@@ -513,14 +550,8 @@
         }
 
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .footer-grid {
@@ -534,167 +565,80 @@
             background: rgba(30, 41, 59, 0.5);
             border-radius: 20px;
             padding: 20px;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer;
+            transition: all 0.4s;
             border: 1px solid rgba(250, 204, 21, 0.2);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .footer-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(250, 204, 21, 0.1), transparent);
-            transition: left 0.5s;
-        }
-
-        .footer-card:hover::before {
-            left: 100%;
         }
 
         .footer-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            background: rgba(30, 41, 59, 0.9);
+            transform: translateY(-5px);
             border-color: #facc15;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
 
         .footer-card h3 {
             color: #facc15;
             margin: 0 0 15px 0;
-            font-size: 1.2rem;
             display: flex;
             align-items: center;
             gap: 10px;
-            transition: all 0.3s;
         }
 
-        .footer-card:hover h3 {
-            transform: translateX(5px);
-            text-shadow: 0 0 10px rgba(250, 204, 21, 0.5);
-        }
-
-        .card-icon {
-            font-size: 1.5rem;
-            transition: all 0.3s;
-        }
-
-        .footer-card:hover .card-icon {
-            transform: rotate(10deg) scale(1.2);
-        }
-
-        /* Featured Broker Style */
         .featured-broker {
             background: linear-gradient(135deg, rgba(250, 204, 21, 0.2), rgba(250, 204, 21, 0.05));
             border: 2px solid #facc15;
             border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 15px;
-            transition: all 0.3s;
+            padding: 15px;
             text-align: center;
+            cursor: pointer;
         }
 
         .featured-broker:hover {
-            transform: scale(1.03);
-            background: linear-gradient(135deg, rgba(250, 204, 21, 0.3), rgba(250, 204, 21, 0.1));
-            box-shadow: 0 0 20px rgba(250, 204, 21, 0.3);
-        }
-
-        .featured-badge {
-            display: inline-block;
-            background: #facc15;
-            color: #0f172a;
-            font-size: 0.8rem;
-            padding: 4px 15px;
-            border-radius: 20px;
-            margin-bottom: 15px;
-            font-weight: bold;
-            animation: pulse 1.5s infinite;
+            transform: scale(1.02);
         }
 
         .broker-logo {
-            width: 70px;
-            height: 70px;
+            width: 60px;
+            height: 60px;
             background: rgba(250, 204, 21, 0.2);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.5rem;
-            margin: 0 auto 15px;
-            transition: all 0.3s;
-        }
-
-        .featured-broker:hover .broker-logo {
-            transform: rotate(360deg) scale(1.1);
-            background: rgba(250, 204, 21, 0.4);
+            margin: 0 auto 10px;
+            font-size: 2rem;
         }
 
         .broker-name {
             font-weight: bold;
             color: #facc15;
-            font-size: 1.3rem;
-            margin-bottom: 10px;
-        }
-
-        .broker-rating {
-            color: #facc15;
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-        }
-
-        .broker-features {
-            font-size: 0.75rem;
-            color: #cbd5e1;
-            margin-bottom: 15px;
+            font-size: 1.2rem;
         }
 
         .open-account-btn {
             display: inline-block;
             background: #facc15;
             color: #0f172a;
-            padding: 10px 25px;
+            padding: 8px 20px;
             border-radius: 40px;
             text-decoration: none;
             font-weight: bold;
             margin-top: 10px;
-            transition: all 0.3s;
-        }
-
-        .open-account-btn:hover {
-            background: #eab308;
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(250, 204, 21, 0.3);
         }
 
         .ebook-list {
             list-style: none;
             padding: 0;
-            margin: 0;
         }
 
         .ebook-list li {
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(250, 204, 21, 0.1);
+            padding: 8px 0;
             display: flex;
             align-items: center;
             gap: 10px;
-            transition: all 0.3s;
-        }
-
-        .ebook-list li:hover {
-            transform: translateX(8px);
-            border-bottom-color: rgba(250, 204, 21, 0.5);
         }
 
         .ebook-list li a {
             color: #e2e8f0;
             text-decoration: none;
-            transition: all 0.3s;
             flex: 1;
         }
 
@@ -702,41 +646,14 @@
             color: #facc15;
         }
 
-        .download-icon {
-            font-size: 0.8rem;
-            color: #4ade80;
-            transition: all 0.3s;
-        }
-
-        .ebook-list li:hover .download-icon {
-            transform: translateX(5px);
-            color: #facc15;
-        }
-
         .review-item {
-            padding: 12px 0;
+            padding: 10px 0;
             border-bottom: 1px solid rgba(250, 204, 21, 0.1);
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-
-        .review-item:hover {
-            transform: translateX(8px);
-            background: rgba(250, 204, 21, 0.05);
-            padding-left: 12px;
-            border-radius: 10px;
         }
 
         .review-stars {
             color: #facc15;
             font-size: 0.8rem;
-            margin-bottom: 5px;
-            transition: all 0.3s;
-        }
-
-        .review-item:hover .review-stars {
-            transform: scale(1.1);
-            letter-spacing: 2px;
         }
 
         .whatsapp-contact {
@@ -751,12 +668,13 @@
             font-weight: bold;
             transition: all 0.3s;
             margin-top: 10px;
+            width: 100%;
+            justify-content: center;
         }
 
         .whatsapp-contact:hover {
             background: #128C7E;
             transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
         }
 
         .footer-bottom {
@@ -764,19 +682,6 @@
             padding-top: 20px;
             border-top: 1px solid rgba(250, 204, 21, 0.2);
             font-size: 0.75rem;
-            color: #94a3b8;
-        }
-
-        .footer-bottom a {
-            color: #facc15;
-            text-decoration: none;
-            transition: all 0.3s;
-            display: inline-block;
-        }
-
-        .footer-bottom a:hover {
-            transform: translateY(-2px);
-            text-shadow: 0 0 8px rgba(250, 204, 21, 0.5);
         }
 
         @media (max-width: 900px) {
@@ -814,7 +719,7 @@
     <!-- MAIN APP -->
     <div id="mainApp" class="main-app">
         <div class="header">
-            <h1>📒 Trade Journal <small>+ Analytics</small></h1>
+            <h1>📒 Trade Journal <small>☁️ Auto Cloud Backup</small></h1>
             <div class="profile-section">
                 <div class="profile-trigger" id="profileTrigger">
                     <div class="profile-avatar" id="profileAvatar">👤</div>
@@ -825,15 +730,35 @@
                     <div class="dropdown-header">
                         <div class="large-avatar" id="largeAvatar">👤</div>
                         <h3 id="dropdownUsername">Username</h3>
-                        <p style="margin:5px 0 0; font-size:0.75rem;">Trader</p>
                     </div>
+                    
+                    <!-- Cloud Backup Section - AUTOMATIC -->
+                    <div class="dropdown-section">
+                        <h4>☁️ Cloud Backup (Auto-Sync)</h4>
+                        <div id="cloudStatus" class="cloud-status">
+                            ⚡ Setup cloud backup below
+                        </div>
+                        <div class="backup-code-input">
+                            <input type="text" id="backupCode" placeholder="Enter Backup Code (e.g., TRADER2024)" style="text-align:center;">
+                            <button id="enableCloudBtn" style="margin:0; background:#4ade80;">🔗 Enable</button>
+                        </div>
+                        <div class="backup-buttons" style="display:flex; gap:8px; margin-top:8px;">
+                            <button id="backupToCloudBtn" style="background:#22c55e; font-size:0.8rem;">☁️ Backup Now</button>
+                            <button id="restoreFromCloudBtn" style="background:#facc15; font-size:0.8rem;">📥 Restore</button>
+                        </div>
+                        <div style="font-size:0.65rem; color:#94a3b8; margin-top:8px; text-align:center;">
+                            💡 Use the SAME backup code on all your devices to sync data
+                        </div>
+                    </div>
+
                     <div class="dropdown-section">
                         <h4>📊 Profile Statistics</h4>
-                        <div class="info-row"><span class="info-label">Total Trades:</span><span class="info-value" id="profileTotalTrades">0</span></div>
-                        <div class="info-row"><span class="info-label">Win Rate:</span><span class="info-value" id="profileWinRate">0%</span></div>
-                        <div class="info-row"><span class="info-label">Total P&L:</span><span class="info-value" id="profileTotalPnL">$0</span></div>
-                        <div class="info-row"><span class="info-label">Avg Consistency:</span><span class="info-value" id="profileAvgConsistency">0%</span></div>
+                        <div class="info-row"><span>Total Trades:</span><span id="profileTotalTrades">0</span></div>
+                        <div class="info-row"><span>Win Rate:</span><span id="profileWinRate">0%</span></div>
+                        <div class="info-row"><span>Total P&L:</span><span id="profileTotalPnL">$0</span></div>
+                        <div class="info-row"><span>Avg Consistency:</span><span id="profileAvgConsistency">0%</span></div>
                     </div>
+
                     <div class="dropdown-section">
                         <h4>📏 Position Calculator</h4>
                         <div class="calc-group"><label>Account Balance ($)</label><input type="number" id="accountBalance" value="10000"></div>
@@ -842,12 +767,14 @@
                         <button id="calculateRiskBtn" style="background:#334155;">Calculate</button>
                         <div id="riskResult" class="calc-result">Position Size: -- lots</div>
                     </div>
+
                     <div class="dropdown-section">
                         <h4>💵 Pip Value</h4>
                         <div class="calc-group"><label>Lot Size</label><input type="number" id="lotSize" value="1" step="0.1"></div>
                         <button id="calculatePipBtn" style="background:#334155;">Calculate</button>
                         <div id="pipResult" class="calc-result">Value per pip: $--</div>
                     </div>
+
                     <div class="dropdown-section">
                         <button id="logoutFromDropdown" class="logout-btn">🚪 Logout</button>
                     </div>
@@ -901,79 +828,66 @@
             </div>
         </div>
 
-        <!-- FOOTER - ONLY OFINANCIAL MARKETS -->
+        <!-- Footer -->
         <div class="footer">
             <div class="footer-grid">
-                <!-- Forex eBooks Section -->
                 <div class="footer-card">
-                    <h3><span class="card-icon">📚</span> Free Forex eBooks</h3>
+                    <h3>📚 Free Forex eBooks</h3>
                     <ul class="ebook-list">
-                        <li><span>📖</span> <a href="https://www.babypips.com/learn/forex" target="_blank">BabyPips - School of Pipsology</a> <span class="download-icon">🔗</span></li>
-                        <li><span>📘</span> <a href="https://www.investopedia.com/articles/forex/11/forex-trading-ebook.asp" target="_blank">Investopedia Forex Trading Guide</a> <span class="download-icon">🔗</span></li>
-                        <li><span>📕</span> <a href="https://www.dailyfx.com/education/ebooks" target="_blank">DailyFX Trading eBooks</a> <span class="download-icon">🔗</span></li>
-                        <li><span>📗</span> <a href="https://www.forex.com/en-us/education/ebooks/" target="_blank">Forex.com Educational Library</a> <span class="download-icon">🔗</span></li>
+                        <li><span>📖</span> <a href="https://www.babypips.com/learn/forex" target="_blank">BabyPips - School of Pipsology</a></li>
+                        <li><span>📘</span> <a href="https://www.investopedia.com/articles/forex/11/forex-trading-ebook.asp" target="_blank">Investopedia Forex Guide</a></li>
+                        <li><span>📕</span> <a href="https://www.dailyfx.com/education/ebooks" target="_blank">DailyFX eBooks</a></li>
+                        <li><span>📗</span> <a href="https://www.forex.com/en-us/education/ebooks/" target="_blank">Forex.com Library</a></li>
                     </ul>
                 </div>
 
-                <!-- Featured Broker: OFinancial Markets ONLY -->
                 <div class="footer-card" onclick="window.open('http://live.ofinancial.markets/signup/faT4NlLK', '_blank')">
-                    <h3><span class="card-icon">🏆</span> Preferred Broker</h3>
+                    <h3>🏆 Preferred Broker</h3>
                     <div class="featured-broker">
-                        <div class="featured-badge">⭐ RECOMMENDED BROKER ⭐</div>
                         <div class="broker-logo">🏦</div>
                         <div class="broker-name">OFinancial Markets</div>
                         <div class="broker-rating">★★★★★ 5.0/5</div>
-                        <div class="broker-features">
-                            ✓ Low Spreads<br>
-                            ✓ Fast Execution<br>
-                            ✓ Regulated Broker<br>
-                            ✓ 24/7 Support
-                        </div>
-                        <div class="open-account-btn">👉 OPEN LIVE ACCOUNT 👈</div>
+                        <div class="open-account-btn">👉 OPEN ACCOUNT 👈</div>
                     </div>
                 </div>
 
-                <!-- Reviews Section with WhatsApp Contact -->
                 <div class="footer-card">
-                    <h3><span class="card-icon">⭐</span> Trader Reviews</h3>
+                    <h3>⭐ Trader Reviews</h3>
                     <div class="review-item">
                         <div class="review-stars">★★★★★</div>
-                        <div class="review-text">"Best trading journal I've used! The consistency tracker changed my trading."</div>
-                        <div class="review-author">- Michael T., 3 years experience</div>
+                        <div>"Best trading journal! The consistency tracker changed my trading."</div>
+                        <small>- Michael T.</small>
                     </div>
                     <div class="review-item">
                         <div class="review-stars">★★★★½</div>
-                        <div class="review-text">"Love the pip calculator and calendar view. Really helps track my progress."</div>
-                        <div class="review-author">- Sarah K., Forex trader</div>
+                        <div>"Love the pip calculator and calendar view."</div>
+                        <small>- Sarah K.</small>
                     </div>
                     <div class="review-item">
                         <div class="review-stars">★★★★★</div>
-                        <div class="review-text">"Finally a journal that holds me accountable to my trading rules!"</div>
-                        <div class="review-author">- David R., Swing trader</div>
+                        <div>"Finally a journal that holds me accountable!"</div>
+                        <small>- David R.</small>
                     </div>
-                    
-                    <!-- WhatsApp Contact Button -->
-                    <div style="margin-top: 20px; text-align: center;">
-                        <a href="https://wa.me/message/KGIKY7FHNWFWE1" target="_blank" class="whatsapp-contact">
-                            💬 Contact Us on WhatsApp
-                        </a>
-                    </div>
+                    <a href="https://wa.me/message/KGIKY7FHNWFWE1" target="_blank" class="whatsapp-contact">💬 Contact Us on WhatsApp</a>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>© 2026 TradeJournal - Empowering traders with discipline & consistency | 
-                <a href="https://wa.me/message/KGIKY7FHNWFWE1" target="_blank">📱 WhatsApp Support</a> | 
-                <a href="http://live.ofinancial.markets/signup/faT4NlLK" target="_blank">⚡ Trade with OFinancial Markets</a></p>
+                <p>© 2026 TradeJournal - Auto Cloud Backup | <a href="http://live.ofinancial.markets/signup/faT4NlLK" target="_blank">Trade with OFinancial Markets</a></p>
             </div>
         </div>
     </div>
 </div>
 
 <script>
+    // CONFIGURATION
+    const SCRIPT_ID = 'AKfycbxzYmHmkhtl5mPeWIS68X5-0g86s3Focn9APLk4qV862klYMHjAP6cyaM33hoiVKfeTQQ';
+    const WEB_APP_URL = `https://script.google.com/macros/s/${SCRIPT_ID}/exec`;
+    
     // User System
     let currentUser = null;
     let currentViewDate = new Date();
     let selectedDate = null;
+    let currentBackupCode = null;
 
     function getUsers() {
         const data = localStorage.getItem("tradingJournalUsers");
@@ -988,7 +902,7 @@
         if(users[username]) return { success: false, error: "Username exists" };
         if(username.length < 3) return { success: false, error: "Min 3 chars" };
         if(password.length < 4) return { success: false, error: "Min 4 chars" };
-        users[username] = { passwordHash: hashPassword(password), trades: [] };
+        users[username] = { passwordHash: hashPassword(password), trades: [], backupCode: null };
         saveUsers(users);
         return { success: true };
     }
@@ -1001,10 +915,15 @@
         return { success: true };
     }
 
-    function getCurrentUserTrades() {
-        if(!currentUser) return [];
+    function getCurrentUserData() {
+        if(!currentUser) return null;
         const users = getUsers();
-        return users[currentUser]?.trades || [];
+        return users[currentUser];
+    }
+
+    function getCurrentUserTrades() {
+        const user = getCurrentUserData();
+        return user?.trades || [];
     }
 
     function updateCurrentUserTrades(trades) {
@@ -1012,6 +931,114 @@
             const users = getUsers();
             users[currentUser].trades = trades;
             saveUsers(users);
+        }
+    }
+    
+    function saveBackupCode(code) {
+        if(currentUser) {
+            const users = getUsers();
+            users[currentUser].backupCode = code;
+            saveUsers(users);
+            currentBackupCode = code;
+            updateCloudStatus();
+        }
+    }
+    
+    function getBackupCode() {
+        const user = getCurrentUserData();
+        return user?.backupCode || null;
+    }
+    
+    function updateCloudStatus() {
+        const code = getBackupCode();
+        const statusDiv = document.getElementById('cloudStatus');
+        const codeInput = document.getElementById('backupCode');
+        
+        if(code && code.length > 0) {
+            statusDiv.className = 'cloud-status';
+            statusDiv.innerHTML = '✅ Cloud Backup ACTIVE! Your trades will sync across devices.<br>Backup Code: ' + code;
+            if(codeInput) codeInput.value = code;
+        } else {
+            statusDiv.className = 'cloud-status';
+            statusDiv.innerHTML = '⚠️ Enter a Backup Code to enable cloud sync. Use the SAME code on all your devices!';
+        }
+    }
+
+    // Cloud Backup Functions
+    async function backupToCloud() {
+        const backupCode = getBackupCode();
+        if(!backupCode) {
+            alert('Please enter and enable a Backup Code first!');
+            return;
+        }
+        
+        const trades = getCurrentUserTrades();
+        if(trades.length === 0) {
+            alert('No trades to backup!');
+            return;
+        }
+        
+        const statusDiv = document.getElementById('cloudStatus');
+        statusDiv.className = 'cloud-status syncing';
+        statusDiv.innerHTML = '☁️ Syncing to cloud... Please wait';
+        
+        try {
+            const response = await fetch(WEB_APP_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    action: 'backup', 
+                    backupCode: backupCode,
+                    username: currentUser, 
+                    trades: trades
+                })
+            });
+            
+            statusDiv.className = 'cloud-status';
+            statusDiv.innerHTML = '✅ Cloud backup COMPLETE! Your trades are saved.';
+            setTimeout(() => updateCloudStatus(), 2000);
+            alert('✅ Successfully backed up ' + trades.length + ' trades to cloud!');
+        } catch(error) {
+            statusDiv.className = 'cloud-status error';
+            statusDiv.innerHTML = '❌ Backup failed. Check your connection and try again.';
+            console.error(error);
+        }
+    }
+    
+    async function restoreFromCloud() {
+        const backupCode = getBackupCode();
+        if(!backupCode) {
+            alert('Please enter and enable a Backup Code first!');
+            return;
+        }
+        
+        const statusDiv = document.getElementById('cloudStatus');
+        statusDiv.className = 'cloud-status syncing';
+        statusDiv.innerHTML = '☁️ Restoring from cloud... Please wait';
+        
+        try {
+            const url = `${WEB_APP_URL}?action=restore&backupCode=${encodeURIComponent(backupCode)}&username=${encodeURIComponent(currentUser)}`;
+            const response = await fetch(url);
+            const data = await response.json();
+            
+            if(data.success && data.trades && data.trades.length > 0) {
+                updateCurrentUserTrades(data.trades);
+                renderAll();
+                statusDiv.className = 'cloud-status';
+                statusDiv.innerHTML = '✅ Restored ' + data.trades.length + ' trades from cloud!';
+                setTimeout(() => updateCloudStatus(), 2000);
+                alert('✅ Restored ' + data.trades.length + ' trades from cloud backup!');
+            } else {
+                statusDiv.className = 'cloud-status';
+                statusDiv.innerHTML = '⚠️ No trades found in cloud for this backup code.';
+                setTimeout(() => updateCloudStatus(), 2000);
+                alert('No trades found in cloud. Create a backup first!');
+            }
+        } catch(error) {
+            statusDiv.className = 'cloud-status error';
+            statusDiv.innerHTML = '❌ Restore failed. Check your connection.';
+            console.error(error);
         }
     }
 
@@ -1062,6 +1089,7 @@
         
         renderCalendar();
         renderTradesTable();
+        updateCloudStatus();
     }
 
     function renderCalendar() {
@@ -1182,6 +1210,11 @@
         document.getElementById('entryPrice').value = '';
         document.getElementById('exitPrice').value = '';
         alert('Trade added!');
+        
+        // Auto-backup if cloud is enabled
+        if(getBackupCode()) {
+            setTimeout(() => backupToCloud(), 500);
+        }
     }
 
     function calculatePositionSize() {
@@ -1237,6 +1270,14 @@
         const now = new Date(); now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
         document.getElementById('tradeDate').value = now.toISOString().slice(0,16);
         buildRuleChecklist();
+        
+        // Load saved backup code
+        const savedCode = getBackupCode();
+        if(savedCode) {
+            document.getElementById('backupCode').value = savedCode;
+            currentBackupCode = savedCode;
+        }
+        
         renderAll();
     }
     
@@ -1244,6 +1285,21 @@
         currentUser = null;
         document.getElementById('mainApp').style.display = 'none';
         showAuthOverlay();
+    }
+    
+    // Enable Cloud Backup
+    function enableCloudBackup() {
+        const code = document.getElementById('backupCode').value.trim();
+        if(!code) {
+            alert('Please enter a Backup Code (example: TRADER2024)');
+            return;
+        }
+        if(code.length < 4) {
+            alert('Backup code must be at least 4 characters');
+            return;
+        }
+        saveBackupCode(code);
+        alert('✅ Cloud backup enabled! Use the SAME code on all your devices to sync trades.');
     }
     
     // Dropdown
@@ -1265,6 +1321,11 @@
     document.getElementById('nextMonthBtn').addEventListener('click', () => { currentViewDate.setMonth(currentViewDate.getMonth()+1); renderCalendar(); });
     document.getElementById('calculateRiskBtn').addEventListener('click', calculatePositionSize);
     document.getElementById('calculatePipBtn').addEventListener('click', calculatePipValue);
+    
+    // Cloud backup buttons
+    document.getElementById('enableCloudBtn').addEventListener('click', enableCloudBackup);
+    document.getElementById('backupToCloudBtn').addEventListener('click', backupToCloud);
+    document.getElementById('restoreFromCloudBtn').addEventListener('click', restoreFromCloud);
     
     document.getElementById('mainApp').style.display = 'none';
     showAuthOverlay();
