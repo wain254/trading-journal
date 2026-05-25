@@ -11,8 +11,8 @@ Professional Trading Journal with Analytics
 
 ---
 
-## 🌟 **Live Demo**
-[View Live Demo](#) - *(Add your deployed URL here)*
+## 🌟 **Live url**
+(https://wain254.github.io/trading-journal/)
 
 ---
 
