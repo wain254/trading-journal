@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trading Journal - Auto Cloud Backup</title>
+    <title>TradeJournal - Cloud Sync | Works on All Devices</title>
     <style>
         * {
             box-sizing: border-box;
@@ -74,9 +74,16 @@
             color: #cbd5e1;
         }
 
-        .form-group input {
+        /* Password field with eye icon */
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-wrapper input {
             width: 100%;
-            padding: 12px 16px;
+            padding: 12px 45px 12px 16px;
             background: rgba(15, 23, 42, 0.7);
             border: 1px solid rgba(250, 204, 21, 0.3);
             border-radius: 16px;
@@ -85,11 +92,31 @@
             transition: all 0.3s;
         }
 
-        .form-group input:focus {
+        .password-wrapper input:focus {
             border-color: #facc15;
             outline: none;
             box-shadow: 0 0 15px rgba(250, 204, 21, 0.3);
-            transform: scale(1.02);
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            width: auto;
+            margin: 0;
+            padding: 0;
+            transition: all 0.3s;
+        }
+
+        .toggle-password:hover {
+            color: #facc15;
+            transform: scale(1.1);
+            background: transparent;
+            box-shadow: none;
         }
 
         .auth-switch {
@@ -107,11 +134,36 @@
         .auth-switch span {
             color: #facc15;
             text-decoration: underline;
-            transition: all 0.3s;
         }
 
-        .auth-switch span:hover {
-            text-shadow: 0 0 8px rgba(250, 204, 21, 0.5);
+        .error-msg {
+            background: rgba(127, 26, 26, 0.9);
+            padding: 12px;
+            border-radius: 16px;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+
+        .loading-msg {
+            background: rgba(250, 204, 21, 0.1);
+            padding: 12px;
+            border-radius: 16px;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #facc15;
+        }
+
+        .success-msg {
+            background: rgba(74, 222, 128, 0.2);
+            border: 1px solid #4ade80;
+            padding: 12px;
+            border-radius: 16px;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #4ade80;
         }
 
         /* Profile Dropdown */
@@ -136,7 +188,6 @@
             border-color: #facc15;
             transform: translateY(-2px);
             box-shadow: 0 5px 20px rgba(250, 204, 21, 0.2);
-            background: rgba(30, 41, 59, 0.95);
         }
 
         .profile-avatar {
@@ -149,11 +200,6 @@
             justify-content: center;
             color: #0f172a;
             font-weight: bold;
-            transition: all 0.3s;
-        }
-
-        .profile-trigger:hover .profile-avatar {
-            transform: rotate(360deg) scale(1.1);
         }
 
         .dropdown-menu {
@@ -178,14 +224,8 @@
         }
 
         @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .dropdown-header {
@@ -236,7 +276,7 @@
             color: #94a3b8;
         }
 
-        .calc-group input, .calc-group select {
+        .calc-group input {
             width: 100%;
             padding: 8px 12px;
             background: rgba(15, 23, 42, 0.7);
@@ -253,46 +293,6 @@
             text-align: center;
             font-weight: bold;
             color: #facc15;
-        }
-
-        /* Cloud Backup Styles */
-        .cloud-status {
-            background: rgba(74, 222, 128, 0.1);
-            border: 1px solid #4ade80;
-            border-radius: 12px;
-            padding: 10px;
-            margin-bottom: 12px;
-            text-align: center;
-            font-size: 0.8rem;
-        }
-
-        .cloud-status.syncing {
-            background: rgba(250, 204, 21, 0.1);
-            border-color: #facc15;
-        }
-
-        .cloud-status.error {
-            background: rgba(248, 113, 113, 0.1);
-            border-color: #f87171;
-        }
-
-        .backup-code-input {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 10px;
-        }
-        
-        .backup-code-input input {
-            flex: 2;
-            padding: 8px;
-            font-size: 0.8rem;
-        }
-        
-        .backup-code-input button {
-            flex: 1;
-            margin: 0;
-            padding: 8px;
-            font-size: 0.8rem;
         }
 
         /* Main App */
@@ -313,12 +313,6 @@
             font-size: 1.8rem;
             margin: 0;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         .dashboard {
@@ -343,18 +337,12 @@
         .card:hover {
             transform: translateY(-8px) scale(1.02);
             border-color: #facc15;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
-            background: rgba(30, 41, 59, 0.9);
         }
 
-        .card:hover .value {
-            text-shadow: 0 0 10px rgba(250, 204, 21, 0.5);
-            animation: pulse 0.5s ease;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+        .card .value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #facc15;
         }
 
         .calendar-section {
@@ -363,13 +351,6 @@
             border-radius: 24px;
             padding: 20px;
             margin-bottom: 24px;
-            border: 1px solid rgba(250, 204, 21, 0.2);
-            transition: all 0.3s;
-        }
-
-        .calendar-section:hover {
-            border-color: rgba(250, 204, 21, 0.5);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
         }
 
         .calendar-grid {
@@ -381,11 +362,9 @@
 
         .calendar-weekday {
             text-align: center;
-            font-weight: bold;
             padding: 10px;
             background: rgba(15, 23, 42, 0.5);
             border-radius: 10px;
-            color: #94a3b8;
             font-size: 0.8rem;
         }
 
@@ -395,38 +374,28 @@
             padding: 10px 8px;
             min-height: 100px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
             border: 1px solid transparent;
         }
 
         .calendar-day:hover {
             border-color: #facc15;
-            transform: translateY(-5px) scale(1.02);
-            background: rgba(30, 41, 59, 0.8);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            transform: translateY(-2px);
         }
 
         .calendar-day.selected {
             border-color: #facc15;
             background: rgba(250, 204, 21, 0.1);
-            animation: glow 1s ease;
-        }
-
-        @keyframes glow {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(250, 204, 21, 0); }
-            50% { box-shadow: 0 0 20px 5px rgba(250, 204, 21, 0.3); }
         }
 
         .day-number {
             font-size: 0.9rem;
             font-weight: bold;
             margin-bottom: 8px;
-            color: #cbd5e1;
         }
 
         .day-pnl.positive { color: #4ade80; }
         .day-pnl.negative { color: #f87171; }
-        .day-pnl { font-size: 0.75rem; font-weight: bold; }
 
         .two-columns {
             display: flex;
@@ -440,13 +409,6 @@
             backdrop-filter: blur(10px);
             border-radius: 24px;
             padding: 20px;
-            border: 1px solid rgba(250, 204, 21, 0.2);
-            transition: all 0.3s;
-        }
-
-        .form-panel:hover, .trades-panel:hover {
-            border-color: rgba(250, 204, 21, 0.5);
-            transform: translateY(-3px);
         }
 
         .form-panel { flex: 1.2; }
@@ -459,14 +421,6 @@
             border: 1px solid rgba(250, 204, 21, 0.3);
             border-radius: 12px;
             color: white;
-            font-size: 0.9rem;
-            transition: all 0.3s;
-        }
-
-        input:focus, select:focus {
-            border-color: #facc15;
-            outline: none;
-            box-shadow: 0 0 10px rgba(250, 204, 21, 0.2);
         }
 
         .rule-row {
@@ -477,12 +431,6 @@
             background: rgba(15, 23, 42, 0.5);
             padding: 8px 12px;
             border-radius: 14px;
-            transition: all 0.3s;
-        }
-
-        .rule-row:hover {
-            background: rgba(250, 204, 21, 0.1);
-            transform: translateX(5px);
         }
 
         button {
@@ -496,13 +444,12 @@
             font-size: 1rem;
             width: 100%;
             margin-top: 8px;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
         }
 
         button:hover {
             background: #eab308;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(250, 204, 21, 0.3);
+            transform: translateY(-2px);
         }
 
         .delete-btn {
@@ -512,10 +459,6 @@
             font-size: 0.75rem;
             width: auto;
             margin: 0;
-        }
-
-        .delete-btn:hover {
-            background: #dc2626;
         }
 
         .logout-btn {
@@ -538,27 +481,18 @@
             border-bottom: 1px solid rgba(51, 65, 85, 0.5);
         }
 
-        /* Footer */
         .footer {
             margin-top: 40px;
             background: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(10px);
             border-radius: 24px;
             padding: 30px 20px;
-            border: 1px solid rgba(250, 204, 21, 0.2);
-            animation: fadeInUp 0.6s ease;
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         .footer-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 25px;
-            margin-bottom: 25px;
         }
 
         .footer-card {
@@ -566,20 +500,15 @@
             border-radius: 20px;
             padding: 20px;
             transition: all 0.4s;
-            border: 1px solid rgba(250, 204, 21, 0.2);
         }
 
         .footer-card:hover {
             transform: translateY(-5px);
-            border-color: #facc15;
         }
 
         .footer-card h3 {
             color: #facc15;
-            margin: 0 0 15px 0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            margin-bottom: 15px;
         }
 
         .featured-broker {
@@ -589,10 +518,6 @@
             padding: 15px;
             text-align: center;
             cursor: pointer;
-        }
-
-        .featured-broker:hover {
-            transform: scale(1.02);
         }
 
         .broker-logo {
@@ -613,17 +538,6 @@
             font-size: 1.2rem;
         }
 
-        .open-account-btn {
-            display: inline-block;
-            background: #facc15;
-            color: #0f172a;
-            padding: 8px 20px;
-            border-radius: 40px;
-            text-decoration: none;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-
         .ebook-list {
             list-style: none;
             padding: 0;
@@ -631,15 +545,11 @@
 
         .ebook-list li {
             padding: 8px 0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
 
         .ebook-list li a {
             color: #e2e8f0;
             text-decoration: none;
-            flex: 1;
         }
 
         .ebook-list li a:hover {
@@ -653,39 +563,33 @@
 
         .review-stars {
             color: #facc15;
-            font-size: 0.8rem;
         }
 
         .whatsapp-contact {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+            display: inline-block;
             background: #25D366;
             color: white;
             padding: 10px 20px;
             border-radius: 50px;
             text-decoration: none;
-            font-weight: bold;
-            transition: all 0.3s;
+            text-align: center;
             margin-top: 10px;
             width: 100%;
-            justify-content: center;
         }
 
         .whatsapp-contact:hover {
             background: #128C7E;
-            transform: scale(1.05);
         }
 
         .footer-bottom {
             text-align: center;
             padding-top: 20px;
+            margin-top: 20px;
             border-top: 1px solid rgba(250, 204, 21, 0.2);
             font-size: 0.75rem;
         }
 
         @media (max-width: 900px) {
-            .calendar-grid { gap: 4px; }
             .calendar-day { min-height: 70px; padding: 5px; }
             .dropdown-menu { width: 95vw; right: -10px; }
         }
@@ -705,13 +609,18 @@
                 </div>
                 <div class="form-group">
                     <label>🔒 Password</label>
-                    <input type="password" id="loginPassword" placeholder="Enter your password">
+                    <div class="password-wrapper">
+                        <input type="password" id="loginPassword" placeholder="Enter your password">
+                        <button type="button" class="toggle-password" onclick="togglePassword('loginPassword', this)">👁️</button>
+                    </div>
                 </div>
+                <div id="authLoading" class="loading-msg" style="display:none;">⏳ Connecting to cloud...</div>
                 <button id="authSubmitBtn">Login →</button>
                 <div class="auth-switch" id="authSwitch">
                     New here? <span>Create an account</span>
                 </div>
                 <div id="authError" class="error-msg" style="display:none;"></div>
+                <div id="authSuccess" class="success-msg" style="display:none;"></div>
             </div>
         </div>
     </div>
@@ -719,7 +628,7 @@
     <!-- MAIN APP -->
     <div id="mainApp" class="main-app">
         <div class="header">
-            <h1>📒 Trade Journal <small>☁️ Auto Cloud Backup</small></h1>
+            <h1>📒 Trade Journal <small>☁️ Cloud Sync</small></h1>
             <div class="profile-section">
                 <div class="profile-trigger" id="profileTrigger">
                     <div class="profile-avatar" id="profileAvatar">👤</div>
@@ -730,25 +639,6 @@
                     <div class="dropdown-header">
                         <div class="large-avatar" id="largeAvatar">👤</div>
                         <h3 id="dropdownUsername">Username</h3>
-                    </div>
-                    
-                    <!-- Cloud Backup Section - AUTOMATIC -->
-                    <div class="dropdown-section">
-                        <h4>☁️ Cloud Backup (Auto-Sync)</h4>
-                        <div id="cloudStatus" class="cloud-status">
-                            ⚡ Setup cloud backup below
-                        </div>
-                        <div class="backup-code-input">
-                            <input type="text" id="backupCode" placeholder="Enter Backup Code (e.g., TRADER2024)" style="text-align:center;">
-                            <button id="enableCloudBtn" style="margin:0; background:#4ade80;">🔗 Enable</button>
-                        </div>
-                        <div class="backup-buttons" style="display:flex; gap:8px; margin-top:8px;">
-                            <button id="backupToCloudBtn" style="background:#22c55e; font-size:0.8rem;">☁️ Backup Now</button>
-                            <button id="restoreFromCloudBtn" style="background:#facc15; font-size:0.8rem;">📥 Restore</button>
-                        </div>
-                        <div style="font-size:0.65rem; color:#94a3b8; margin-top:8px; text-align:center;">
-                            💡 Use the SAME backup code on all your devices to sync data
-                        </div>
                     </div>
 
                     <div class="dropdown-section">
@@ -834,10 +724,9 @@
                 <div class="footer-card">
                     <h3>📚 Free Forex eBooks</h3>
                     <ul class="ebook-list">
-                        <li><span>📖</span> <a href="https://www.babypips.com/learn/forex" target="_blank">BabyPips - School of Pipsology</a></li>
-                        <li><span>📘</span> <a href="https://www.investopedia.com/articles/forex/11/forex-trading-ebook.asp" target="_blank">Investopedia Forex Guide</a></li>
-                        <li><span>📕</span> <a href="https://www.dailyfx.com/education/ebooks" target="_blank">DailyFX eBooks</a></li>
-                        <li><span>📗</span> <a href="https://www.forex.com/en-us/education/ebooks/" target="_blank">Forex.com Library</a></li>
+                        <li>📖 <a href="https://www.babypips.com/learn/forex" target="_blank">BabyPips - School of Pipsology</a></li>
+                        <li>📘 <a href="https://www.investopedia.com/articles/forex/11/forex-trading-ebook.asp" target="_blank">Investopedia Forex Guide</a></li>
+                        <li>📕 <a href="https://www.dailyfx.com/education/ebooks" target="_blank">DailyFX eBooks</a></li>
                     </ul>
                 </div>
 
@@ -847,7 +736,7 @@
                         <div class="broker-logo">🏦</div>
                         <div class="broker-name">OFinancial Markets</div>
                         <div class="broker-rating">★★★★★ 5.0/5</div>
-                        <div class="open-account-btn">👉 OPEN ACCOUNT 👈</div>
+                        <div class="open-account-btn" style="background:#facc15; padding:8px 20px; border-radius:40px; display:inline-block; margin-top:10px;">👉 OPEN ACCOUNT 👈</div>
                     </div>
                 </div>
 
@@ -863,182 +752,99 @@
                         <div>"Love the pip calculator and calendar view."</div>
                         <small>- Sarah K.</small>
                     </div>
-                    <div class="review-item">
-                        <div class="review-stars">★★★★★</div>
-                        <div>"Finally a journal that holds me accountable!"</div>
-                        <small>- David R.</small>
-                    </div>
                     <a href="https://wa.me/message/KGIKY7FHNWFWE1" target="_blank" class="whatsapp-contact">💬 Contact Us on WhatsApp</a>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>© 2026 TradeJournal - Auto Cloud Backup | <a href="http://live.ofinancial.markets/signup/faT4NlLK" target="_blank">Trade with OFinancial Markets</a></p>
+                <p>© 2026 TradeJournal - Cloud Sync | <a href="http://live.ofinancial.markets/signup/faT4NlLK" target="_blank" style="color:#facc15;">Trade with OFinancial Markets</a></p>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // CONFIGURATION
-    const SCRIPT_ID = 'AKfycbxzYmHmkhtl5mPeWIS68X5-0g86s3Focn9APLk4qV862klYMHjAP6cyaM33hoiVKfeTQQ';
+    // CONFIGURATION - YOUR UPDATED GOOGLE SCRIPT ID
+    const SCRIPT_ID = 'AKfycbwVX6yC9KfnntFjAEsNjPeZ_V8zDHfHczsynEwG2WCiYO0upWg57ygATDpgHxzXr8g21w';
     const WEB_APP_URL = `https://script.google.com/macros/s/${SCRIPT_ID}/exec`;
     
-    // User System
     let currentUser = null;
+    let currentUserTrades = [];
     let currentViewDate = new Date();
     let selectedDate = null;
-    let currentBackupCode = null;
 
-    function getUsers() {
-        const data = localStorage.getItem("tradingJournalUsers");
-        return data ? JSON.parse(data) : {};
-    }
-
-    function saveUsers(users) { localStorage.setItem("tradingJournalUsers", JSON.stringify(users)); }
-    function hashPassword(pwd) { return btoa(pwd + "salt123"); }
-
-    function registerUser(username, password) {
-        const users = getUsers();
-        if(users[username]) return { success: false, error: "Username exists" };
-        if(username.length < 3) return { success: false, error: "Min 3 chars" };
-        if(password.length < 4) return { success: false, error: "Min 4 chars" };
-        users[username] = { passwordHash: hashPassword(password), trades: [], backupCode: null };
-        saveUsers(users);
-        return { success: true };
+    // Helper function to hash password
+    function hashPassword(pwd) {
+        return btoa(pwd + "trading2024secure");
     }
 
-    function loginUser(username, password) {
-        const users = getUsers();
-        const user = users[username];
-        if(!user) return { success: false, error: "User not found" };
-        if(user.passwordHash !== hashPassword(password)) return { success: false, error: "Wrong password" };
-        return { success: true };
-    }
-
-    function getCurrentUserData() {
-        if(!currentUser) return null;
-        const users = getUsers();
-        return users[currentUser];
-    }
-
-    function getCurrentUserTrades() {
-        const user = getCurrentUserData();
-        return user?.trades || [];
-    }
-
-    function updateCurrentUserTrades(trades) {
-        if(currentUser) {
-            const users = getUsers();
-            users[currentUser].trades = trades;
-            saveUsers(users);
-        }
-    }
-    
-    function saveBackupCode(code) {
-        if(currentUser) {
-            const users = getUsers();
-            users[currentUser].backupCode = code;
-            saveUsers(users);
-            currentBackupCode = code;
-            updateCloudStatus();
-        }
-    }
-    
-    function getBackupCode() {
-        const user = getCurrentUserData();
-        return user?.backupCode || null;
-    }
-    
-    function updateCloudStatus() {
-        const code = getBackupCode();
-        const statusDiv = document.getElementById('cloudStatus');
-        const codeInput = document.getElementById('backupCode');
-        
-        if(code && code.length > 0) {
-            statusDiv.className = 'cloud-status';
-            statusDiv.innerHTML = '✅ Cloud Backup ACTIVE! Your trades will sync across devices.<br>Backup Code: ' + code;
-            if(codeInput) codeInput.value = code;
+    // Toggle Password Visibility
+    function togglePassword(fieldId, button) {
+        const field = document.getElementById(fieldId);
+        if(field.type === 'password') {
+            field.type = 'text';
+            button.innerHTML = '🙈';
         } else {
-            statusDiv.className = 'cloud-status';
-            statusDiv.innerHTML = '⚠️ Enter a Backup Code to enable cloud sync. Use the SAME code on all your devices!';
+            field.type = 'password';
+            button.innerHTML = '👁️';
         }
     }
 
-    // Cloud Backup Functions
-    async function backupToCloud() {
-        const backupCode = getBackupCode();
-        if(!backupCode) {
-            alert('Please enter and enable a Backup Code first!');
-            return;
-        }
-        
-        const trades = getCurrentUserTrades();
-        if(trades.length === 0) {
-            alert('No trades to backup!');
-            return;
-        }
-        
-        const statusDiv = document.getElementById('cloudStatus');
-        statusDiv.className = 'cloud-status syncing';
-        statusDiv.innerHTML = '☁️ Syncing to cloud... Please wait';
+    // CLOUD API FUNCTIONS
+    async function cloudRegister(username, password) {
+        const hashedPassword = hashPassword(password);
+        const url = `${WEB_APP_URL}?action=register&username=${encodeURIComponent(username)}&password=${encodeURIComponent(hashedPassword)}`;
         
         try {
-            const response = await fetch(WEB_APP_URL, {
+            const response = await fetch(url);
+            const data = await response.json();
+            return data;
+        } catch(error) {
+            console.error('Register error:', error);
+            return { success: false, error: 'Network error. Check your connection.' };
+        }
+    }
+
+    async function cloudLogin(username, password) {
+        const hashedPassword = hashPassword(password);
+        const url = `${WEB_APP_URL}?action=login&username=${encodeURIComponent(username)}&password=${encodeURIComponent(hashedPassword)}`;
+        
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            return data;
+        } catch(error) {
+            console.error('Login error:', error);
+            return { success: false, error: 'Network error. Check your connection.' };
+        }
+    }
+
+    async function cloudGetTrades(username) {
+        const url = `${WEB_APP_URL}?action=getTrades&username=${encodeURIComponent(username)}`;
+        
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            return data.trades || [];
+        } catch(error) {
+            console.error('Get trades error:', error);
+            return [];
+        }
+    }
+
+    async function cloudSaveTrades(username, trades) {
+        const url = `${WEB_APP_URL}?action=saveTrades`;
+        
+        try {
+            const response = await fetch(url, {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    action: 'backup', 
-                    backupCode: backupCode,
-                    username: currentUser, 
-                    trades: trades
-                })
+                body: JSON.stringify({ username: username, trades: trades })
             });
-            
-            statusDiv.className = 'cloud-status';
-            statusDiv.innerHTML = '✅ Cloud backup COMPLETE! Your trades are saved.';
-            setTimeout(() => updateCloudStatus(), 2000);
-            alert('✅ Successfully backed up ' + trades.length + ' trades to cloud!');
+            return { success: true };
         } catch(error) {
-            statusDiv.className = 'cloud-status error';
-            statusDiv.innerHTML = '❌ Backup failed. Check your connection and try again.';
-            console.error(error);
-        }
-    }
-    
-    async function restoreFromCloud() {
-        const backupCode = getBackupCode();
-        if(!backupCode) {
-            alert('Please enter and enable a Backup Code first!');
-            return;
-        }
-        
-        const statusDiv = document.getElementById('cloudStatus');
-        statusDiv.className = 'cloud-status syncing';
-        statusDiv.innerHTML = '☁️ Restoring from cloud... Please wait';
-        
-        try {
-            const url = `${WEB_APP_URL}?action=restore&backupCode=${encodeURIComponent(backupCode)}&username=${encodeURIComponent(currentUser)}`;
-            const response = await fetch(url);
-            const data = await response.json();
-            
-            if(data.success && data.trades && data.trades.length > 0) {
-                updateCurrentUserTrades(data.trades);
-                renderAll();
-                statusDiv.className = 'cloud-status';
-                statusDiv.innerHTML = '✅ Restored ' + data.trades.length + ' trades from cloud!';
-                setTimeout(() => updateCloudStatus(), 2000);
-                alert('✅ Restored ' + data.trades.length + ' trades from cloud backup!');
-            } else {
-                statusDiv.className = 'cloud-status';
-                statusDiv.innerHTML = '⚠️ No trades found in cloud for this backup code.';
-                setTimeout(() => updateCloudStatus(), 2000);
-                alert('No trades found in cloud. Create a backup first!');
-            }
-        } catch(error) {
-            statusDiv.className = 'cloud-status error';
-            statusDiv.innerHTML = '❌ Restore failed. Check your connection.';
-            console.error(error);
+            console.error('Save trades error:', error);
+            return { success: false };
         }
     }
 
@@ -1057,7 +863,7 @@
     }
 
     function renderAll() {
-        const trades = getCurrentUserTrades();
+        const trades = currentUserTrades;
         const total = trades.length;
         const totalPnL = trades.reduce((sum, t) => sum + (Number(t.pnl) || 0), 0);
         const winningTrades = trades.filter(t => Number(t.pnl) > 0).length;
@@ -1089,13 +895,12 @@
         
         renderCalendar();
         renderTradesTable();
-        updateCloudStatus();
     }
 
     function renderCalendar() {
         const year = currentViewDate.getFullYear();
         const month = currentViewDate.getMonth();
-        const trades = getCurrentUserTrades();
+        const trades = currentUserTrades;
         const monthData = {};
         trades.forEach(t => {
             const d = new Date(t.date);
@@ -1139,7 +944,7 @@
             el.addEventListener('click', () => {
                 selectedDate = el.dataset.date;
                 renderCalendar();
-                const dayTrades = getCurrentUserTrades().filter(t => t.date.split('T')[0] === selectedDate);
+                const dayTrades = currentUserTrades.filter(t => t.date.split('T')[0] === selectedDate);
                 if(dayTrades.length) {
                     const total = dayTrades.reduce((s,t)=>s+Number(t.pnl),0);
                     document.getElementById('dayDetailPanel').innerHTML = `<h4>📅 ${selectedDate}</h4>
@@ -1153,7 +958,7 @@
     }
 
     function renderTradesTable() {
-        const trades = getCurrentUserTrades();
+        const trades = currentUserTrades;
         const tbody = document.getElementById('tradesBody');
         if(!trades.length) { tbody.innerHTML = '<tr><td colspan="8">No trades yet</td></tr>'; return; }
         tbody.innerHTML = '';
@@ -1172,10 +977,10 @@
             </tr>`;
         });
         document.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                let tradesArr = getCurrentUserTrades();
-                tradesArr = tradesArr.filter(t => t.id != btn.dataset.id);
-                updateCurrentUserTrades(tradesArr);
+            btn.addEventListener('click', async (e) => {
+                const id = parseInt(btn.dataset.id);
+                currentUserTrades = currentUserTrades.filter(t => t.id !== id);
+                await cloudSaveTrades(currentUser, currentUserTrades);
                 renderAll();
             });
         });
@@ -1189,7 +994,7 @@
         });
     }
 
-    function addTrade() {
+    async function addTrade() {
         const date = document.getElementById('tradeDate').value;
         if(!date) { alert('Select date'); return; }
         const symbol = document.getElementById('symbol').value;
@@ -1202,19 +1007,13 @@
         const ruleChecks = {};
         RULES_LIST.forEach(r => { ruleChecks[r.id] = document.getElementById(r.id).checked; });
         const newTrade = { id: Date.now(), date, symbol, direction, entry, exit, size, pnl, ruleChecks };
-        let trades = getCurrentUserTrades();
-        trades.unshift(newTrade);
-        updateCurrentUserTrades(trades);
+        currentUserTrades.unshift(newTrade);
+        await cloudSaveTrades(currentUser, currentUserTrades);
         renderAll();
         document.getElementById('pnl').value = '';
         document.getElementById('entryPrice').value = '';
         document.getElementById('exitPrice').value = '';
-        alert('Trade added!');
-        
-        // Auto-backup if cloud is enabled
-        if(getBackupCode()) {
-            setTimeout(() => backupToCloud(), 500);
-        }
+        alert('✅ Trade added and saved to cloud!');
     }
 
     function calculatePositionSize() {
@@ -1228,16 +1027,16 @@
         const riskAmount = balance * (riskPercent / 100);
         const pipValue = 10;
         const positionSize = riskAmount / (stopLoss * pipValue);
-        document.getElementById('riskResult').innerHTML = `Position Size: ${positionSize.toFixed(2)} lots<br>Risk Amount: $${riskAmount.toFixed(2)}`;
+        document.getElementById('riskResult').innerHTML = `📊 Position Size: ${positionSize.toFixed(2)} lots<br>💰 Risk Amount: $${riskAmount.toFixed(2)}`;
     }
     
     function calculatePipValue() {
         const lots = parseFloat(document.getElementById('lotSize').value);
         const valuePerPip = lots * 10;
-        document.getElementById('pipResult').innerHTML = `Value per pip: $${valuePerPip.toFixed(2)}<br>10 pips: $${(valuePerPip * 10).toFixed(2)}`;
+        document.getElementById('pipResult').innerHTML = `💵 Value per pip: $${valuePerPip.toFixed(2)}<br>📈 10 pips: $${(valuePerPip * 10).toFixed(2)}<br>🎯 50 pips: $${(valuePerPip * 50).toFixed(2)}`;
     }
 
-    // Auth
+    // Auth UI
     let authMode = 'login';
     function showAuthOverlay() { document.getElementById('authOverlay').classList.add('active'); }
     function hideAuthOverlay() { document.getElementById('authOverlay').classList.remove('active'); }
@@ -1247,59 +1046,80 @@
         document.getElementById('authTitle').innerText = authMode === 'login' ? 'Welcome Back' : 'Create Account';
         document.getElementById('authSubmitBtn').innerHTML = authMode === 'login' ? 'Login →' : 'Register →';
         document.getElementById('authSwitch').innerHTML = authMode === 'login' ? 'New here? <span>Create an account</span>' : 'Already have an account? <span>Login</span>';
+        document.getElementById('authError').style.display = 'none';
+        document.getElementById('authSuccess').style.display = 'none';
     }
     
-    function handleAuth() {
+    async function handleAuth() {
         const username = document.getElementById('loginUsername').value.trim();
         const password = document.getElementById('loginPassword').value;
         const errorDiv = document.getElementById('authError');
-        if(!username || !password) { errorDiv.innerText = 'Fill all fields'; errorDiv.style.display = 'block'; return; }
-        if(authMode === 'register') {
-            const res = registerUser(username, password);
-            if(!res.success) { errorDiv.innerText = res.error; errorDiv.style.display = 'block'; return; }
+        const successDiv = document.getElementById('authSuccess');
+        const loadingDiv = document.getElementById('authLoading');
+        
+        if(!username || !password) { 
+            errorDiv.innerText = 'Please fill all fields'; 
+            errorDiv.style.display = 'block'; 
+            return; 
         }
-        const res = loginUser(username, password);
-        if(!res.success) { errorDiv.innerText = res.error; errorDiv.style.display = 'block'; return; }
-        currentUser = username;
-        hideAuthOverlay();
+        
+        loadingDiv.style.display = 'block';
+        errorDiv.style.display = 'none';
+        successDiv.style.display = 'none';
+        
+        if(authMode === 'register') {
+            const result = await cloudRegister(username, password);
+            if(!result.success) {
+                loadingDiv.style.display = 'none';
+                errorDiv.innerText = result.error;
+                errorDiv.style.display = 'block';
+                return;
+            }
+            successDiv.innerText = '✅ Account created! Logging you in...';
+            successDiv.style.display = 'block';
+            
+            const loginResult = await cloudLogin(username, password);
+            if(loginResult.success) {
+                currentUser = username;
+                currentUserTrades = await cloudGetTrades(username);
+                loadingDiv.style.display = 'none';
+                hideAuthOverlay();
+                showMainApp();
+            }
+        } else {
+            const result = await cloudLogin(username, password);
+            if(!result.success) {
+                loadingDiv.style.display = 'none';
+                errorDiv.innerText = result.error;
+                errorDiv.style.display = 'block';
+                return;
+            }
+            currentUser = username;
+            currentUserTrades = await cloudGetTrades(username);
+            loadingDiv.style.display = 'none';
+            hideAuthOverlay();
+            showMainApp();
+        }
+    }
+    
+    function showMainApp() {
         document.getElementById('mainApp').style.display = 'block';
-        document.getElementById('profileName').innerText = username;
-        document.getElementById('dropdownUsername').innerText = username;
-        document.getElementById('profileAvatar').innerHTML = username.charAt(0).toUpperCase();
-        document.getElementById('largeAvatar').innerHTML = username.charAt(0).toUpperCase();
-        const now = new Date(); now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        document.getElementById('profileName').innerText = currentUser;
+        document.getElementById('dropdownUsername').innerText = currentUser;
+        document.getElementById('profileAvatar').innerHTML = currentUser.charAt(0).toUpperCase();
+        document.getElementById('largeAvatar').innerHTML = currentUser.charAt(0).toUpperCase();
+        const now = new Date(); 
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
         document.getElementById('tradeDate').value = now.toISOString().slice(0,16);
         buildRuleChecklist();
-        
-        // Load saved backup code
-        const savedCode = getBackupCode();
-        if(savedCode) {
-            document.getElementById('backupCode').value = savedCode;
-            currentBackupCode = savedCode;
-        }
-        
         renderAll();
     }
     
     function logout() {
         currentUser = null;
+        currentUserTrades = [];
         document.getElementById('mainApp').style.display = 'none';
         showAuthOverlay();
-    }
-    
-    // Enable Cloud Backup
-    function enableCloudBackup() {
-        const code = document.getElementById('backupCode').value.trim();
-        if(!code) {
-            alert('Please enter a Backup Code (example: TRADER2024)');
-            return;
-        }
-        if(code.length < 4) {
-            alert('Backup code must be at least 4 characters');
-            return;
-        }
-        saveBackupCode(code);
-        alert('✅ Cloud backup enabled! Use the SAME code on all your devices to sync trades.');
     }
     
     // Dropdown
@@ -1316,16 +1136,18 @@
     document.getElementById('authSwitch').addEventListener('click', switchAuthMode);
     document.getElementById('logoutFromDropdown').addEventListener('click', logout);
     document.getElementById('addTradeBtn').addEventListener('click', addTrade);
-    document.getElementById('resetUserDataBtn').addEventListener('click', () => { if(confirm('Delete all trades?')) updateCurrentUserTrades([]); renderAll(); });
+    document.getElementById('resetUserDataBtn').addEventListener('click', async () => { 
+        if(confirm('⚠️ Delete ALL your trades? This cannot be undone!')) {
+            currentUserTrades = []; 
+            await cloudSaveTrades(currentUser, currentUserTrades);
+            renderAll();
+            alert('All trades deleted successfully');
+        }
+    });
     document.getElementById('prevMonthBtn').addEventListener('click', () => { currentViewDate.setMonth(currentViewDate.getMonth()-1); renderCalendar(); });
     document.getElementById('nextMonthBtn').addEventListener('click', () => { currentViewDate.setMonth(currentViewDate.getMonth()+1); renderCalendar(); });
     document.getElementById('calculateRiskBtn').addEventListener('click', calculatePositionSize);
     document.getElementById('calculatePipBtn').addEventListener('click', calculatePipValue);
-    
-    // Cloud backup buttons
-    document.getElementById('enableCloudBtn').addEventListener('click', enableCloudBackup);
-    document.getElementById('backupToCloudBtn').addEventListener('click', backupToCloud);
-    document.getElementById('restoreFromCloudBtn').addEventListener('click', restoreFromCloud);
     
     document.getElementById('mainApp').style.display = 'none';
     showAuthOverlay();
