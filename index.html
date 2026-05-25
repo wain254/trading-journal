@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TradeJournal - Cloud Sync | Works on All Devices</title>
+    <title>TradeJournal - Auto Cloud Sync | Works on All Devices</title>
     <style>
         * {
             box-sizing: border-box;
@@ -628,7 +628,7 @@
     <!-- MAIN APP -->
     <div id="mainApp" class="main-app">
         <div class="header">
-            <h1>📒 Trade Journal <small>☁️ Cloud Sync</small></h1>
+            <h1>📒 Trade Journal <small>☁️ Auto Cloud Sync</small></h1>
             <div class="profile-section">
                 <div class="profile-trigger" id="profileTrigger">
                     <div class="profile-avatar" id="profileAvatar">👤</div>
@@ -713,7 +713,7 @@
             </div>
             <div class="trades-panel">
                 <h3>📋 Trade History</h3>
-                <div style="overflow-x:auto;"><table id="tradesTable"><thead><tr><th>Date</th><th>Symbol</th><th>Dir</th><th>Entry/Exit</th><th>P&L</th><th>Rules</th><th>Adherence</th><th>Action</th></tr></thead><tbody id="tradesBody"><tr><td colspan="8">No trades yet</td></tr></tbody></table>
+                <div style="overflow-x:auto;"><table id="tradesTable"><thead><tr><th>Date</th><th>Symbol</th><th>Dir</th><th>Entry/Exit</th><th>P&L</th><th>Rules</th><th>Adherence</th><th>Action</th></tr></thead><tbody id="tradesBody"><tr><td colspan="8">Loading trades from cloud...</td></tr></tbody></tr>
                 </div>
             </div>
         </div>
@@ -756,14 +756,14 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>© 2026 TradeJournal - Cloud Sync | <a href="http://live.ofinancial.markets/signup/faT4NlLK" target="_blank" style="color:#facc15;">Trade with OFinancial Markets</a></p>
+                <p>© 2026 TradeJournal - Auto Cloud Sync | <a href="http://live.ofinancial.markets/signup/faT4NlLK" target="_blank" style="color:#facc15;">Trade with OFinancial Markets</a></p>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // CONFIGURATION - YOUR UPDATED GOOGLE SCRIPT ID
+    // CONFIGURATION - YOUR GOOGLE SCRIPT ID
     const SCRIPT_ID = 'AKfycbwVX6yC9KfnntFjAEsNjPeZ_V8zDHfHczsynEwG2WCiYO0upWg57ygATDpgHxzXr8g21w';
     const WEB_APP_URL = `https://script.google.com/macros/s/${SCRIPT_ID}/exec`;
     
@@ -835,7 +835,7 @@
         const url = `${WEB_APP_URL}?action=saveTrades`;
         
         try {
-            const response = await fetch(url, {
+            await fetch(url, {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
@@ -960,7 +960,7 @@
     function renderTradesTable() {
         const trades = currentUserTrades;
         const tbody = document.getElementById('tradesBody');
-        if(!trades.length) { tbody.innerHTML = '<tr><td colspan="8">No trades yet</td></tr>'; return; }
+        if(!trades.length) { tbody.innerHTML = '<tr><td colspan="8">No trades yet. Add your first trade!</td></tr>'; return; }
         tbody.innerHTML = '';
         trades.slice().reverse().forEach(t => {
             const ruleCount = Object.values(t.ruleChecks).filter(v=>v===true).length;
@@ -982,6 +982,7 @@
                 currentUserTrades = currentUserTrades.filter(t => t.id !== id);
                 await cloudSaveTrades(currentUser, currentUserTrades);
                 renderAll();
+                alert('✅ Trade deleted and synced to cloud!');
             });
         });
     }
@@ -1013,7 +1014,7 @@
         document.getElementById('pnl').value = '';
         document.getElementById('entryPrice').value = '';
         document.getElementById('exitPrice').value = '';
-        alert('✅ Trade added and saved to cloud!');
+        alert('✅ Trade added and saved to cloud! It will appear on all your devices.');
     }
 
     function calculatePositionSize() {
@@ -1077,29 +1078,25 @@
             }
             successDiv.innerText = '✅ Account created! Logging you in...';
             successDiv.style.display = 'block';
-            
-            const loginResult = await cloudLogin(username, password);
-            if(loginResult.success) {
-                currentUser = username;
-                currentUserTrades = await cloudGetTrades(username);
-                loadingDiv.style.display = 'none';
-                hideAuthOverlay();
-                showMainApp();
-            }
-        } else {
-            const result = await cloudLogin(username, password);
-            if(!result.success) {
-                loadingDiv.style.display = 'none';
-                errorDiv.innerText = result.error;
-                errorDiv.style.display = 'block';
-                return;
-            }
-            currentUser = username;
-            currentUserTrades = await cloudGetTrades(username);
-            loadingDiv.style.display = 'none';
-            hideAuthOverlay();
-            showMainApp();
         }
+        
+        // LOGIN AND FETCH TRADES FROM CLOUD
+        const loginResult = await cloudLogin(username, password);
+        if(!loginResult.success) {
+            loadingDiv.style.display = 'none';
+            errorDiv.innerText = loginResult.error;
+            errorDiv.style.display = 'block';
+            return;
+        }
+        
+        currentUser = username;
+        
+        // IMPORTANT: Fetch trades from cloud immediately after login
+        currentUserTrades = await cloudGetTrades(username);
+        
+        loadingDiv.style.display = 'none';
+        hideAuthOverlay();
+        showMainApp();
     }
     
     function showMainApp() {
@@ -1113,6 +1110,12 @@
         document.getElementById('tradeDate').value = now.toISOString().slice(0,16);
         buildRuleChecklist();
         renderAll();
+        
+        // Show sync status
+        const tradeCount = currentUserTrades.length;
+        if(tradeCount > 0) {
+            console.log(`✅ Synced ${tradeCount} trades from cloud`);
+        }
     }
     
     function logout() {
@@ -1141,7 +1144,7 @@
             currentUserTrades = []; 
             await cloudSaveTrades(currentUser, currentUserTrades);
             renderAll();
-            alert('All trades deleted successfully');
+            alert('All trades deleted and synced to cloud');
         }
     });
     document.getElementById('prevMonthBtn').addEventListener('click', () => { currentViewDate.setMonth(currentViewDate.getMonth()-1); renderCalendar(); });
