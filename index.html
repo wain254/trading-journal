@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TradeJournal - Cloud Backup (Supabase + Google Sheets)</title>
+    <title>TradeJournal - Supabase Cloud (Full Sync)</title>
     <style>
         * {
             box-sizing: border-box;
@@ -523,7 +523,7 @@
     <!-- MAIN APP -->
     <div id="mainApp" class="main-app">
         <div class="header">
-            <h1>📒 Trade Journal <small>☁️ Google Sheets Backup</small></h1>
+            <h1>📒 Trade Journal <small>☁️ Full Cloud Sync</small></h1>
             <div class="profile-section">
                 <div class="profile-trigger" id="profileTrigger">
                     <div class="profile-avatar" id="profileAvatar">👤</div>
@@ -536,10 +536,9 @@
                         <h3 id="dropdownUsername">Username</h3>
                     </div>
                     <div class="dropdown-section">
-                        <h4>☁️ Cloud Backup Status</h4>
-                        <div id="cloudStatus" class="cloud-status">✅ Connected to Google Sheets</div>
-                        <button id="backupToCloudBtn" style="background:#22c55e;">☁️ Backup All Trades</button>
-                        <button id="restoreFromCloudBtn" style="background:#facc15;">📥 Restore from Cloud</button>
+                        <h4>☁️ Cloud Status</h4>
+                        <div id="cloudStatus" class="cloud-status">✅ Trades save directly to cloud</div>
+                        <button id="syncFromCloudBtn" style="background:#22c55e;">🔄 Sync Trades</button>
                     </div>
                     <div class="dropdown-section">
                         <h4>📊 Statistics</h4>
@@ -606,7 +605,7 @@
                 <input type="number" step="any" id="pnl" placeholder="P&L ($)">
                 <h4>⚖️ Consistency Rules</h4>
                 <div id="rulesContainer"></div>
-                <button id="addTradeBtn">➕ Add Trade</button>
+                <button id="addTradeBtn">➕ Add Trade (Auto Saves to Cloud)</button>
                 <button id="resetDataBtn" style="background:#334155;">🗑️ Delete All Trades</button>
             </div>
             <div class="trade-history">
@@ -646,27 +645,18 @@
                     <a href="https://wa.me/message/KGIKY7FHNWFWE1" target="_blank" class="whatsapp-contact">💬 WhatsApp Support</a>
                 </div>
             </div>
-            <div class="footer-bottom">© 2026 TradeJournal - Google Sheets Backup | <a href="http://live.ofinancial.markets/signup/faT4NlLK" target="_blank" style="color:#facc15;">Trade with OFinancial Markets</a></div>
+            <div class="footer-bottom">© 2026 TradeJournal - Full Cloud Sync | <a href="http://live.ofinancial.markets/signup/faT4NlLK" target="_blank" style="color:#facc15;">Trade with OFinancial Markets</a></div>
         </div>
     </div>
 </div>
 
 <script>
     // ============================================================
-    // SUPABASE CONFIGURATION - YOUR CREDENTIALS
+    // SUPABASE CONFIGURATION
     // ============================================================
     const SUPABASE_URL = 'https://xrpfhfswshaxvgnujrbf.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhycGZoZnN3c2hheHZnbnVqcmJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Mzg1NDIsImV4cCI6MjA5NTMxNDU0Mn0.af9zzRhqhv6ojfPsRjM1eGpWG-i6SxbsO_HpeZv2tUs';
     
-    // ============================================================
-    // GOOGLE SHEETS WEB APP URL (YOUR SCRIPT ID)
-    // ============================================================
-    const GOOGLE_SCRIPT_ID = 'AKfycbwVX6yC9KfnntFjAEsNjPeZ_V8zDHfHczsynEwG2WCiYO0upWg57ygATDpgHxzXr8g21w';
-    const GOOGLE_WEB_APP_URL = `https://script.google.com/macros/s/${GOOGLE_SCRIPT_ID}/exec`;
-    
-    // ============================================================
-    // MAIN APP STATE
-    // ============================================================
     let currentUser = null;
     let currentUserId = null;
     let currentTrades = [];
@@ -682,7 +672,7 @@
     }
     
     // ============================================================
-    // SUPABASE AUTH FUNCTIONS (USER LOGIN/REGISTER)
+    // SUPABASE API FUNCTIONS
     // ============================================================
     async function registerUser(username, password) {
         const hashedPwd = await hashPassword(password);
@@ -732,58 +722,82 @@
         return { success: true, user: data[0] };
     }
     
-    // ============================================================
-    // GOOGLE SHEETS TRADE FUNCTIONS
-    // ============================================================
-    async function backupToGoogleSheets() {
-        if(!currentUser) return;
+    async function loadTradesFromSupabase(userId) {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/trades?user_id=eq.${userId}&select=*`, {
+            method: 'GET',
+            headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                'Content-Type': 'application/json'
+            }
+        });
         
-        const backupCode = currentUser.toLowerCase() + "_backup";
+        if(!response.ok) {
+            return [];
+        }
         
-        const response = await fetch(GOOGLE_WEB_APP_URL, {
+        const data = await response.json();
+        return data.map(t => ({
+            id: t.id,
+            date: t.trade_date,
+            symbol: t.symbol,
+            direction: t.direction,
+            entry: t.entry_price,
+            exit: t.exit_price,
+            size: t.position_size,
+            pnl: t.pnl,
+            ruleChecks: t.rule_checks || {}
+        }));
+    }
+    
+    async function saveTradeToSupabase(userId, trade) {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/trades`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify({
-                action: 'backup',
-                backupCode: backupCode,
-                username: currentUser,
-                trades: currentTrades
+                user_id: userId,
+                trade_date: trade.date,
+                symbol: trade.symbol,
+                direction: trade.direction,
+                entry_price: trade.entry,
+                exit_price: trade.exit,
+                position_size: trade.size,
+                pnl: trade.pnl,
+                rule_checks: trade.ruleChecks
             })
         });
         
-        const result = await response.json();
-        return result;
+        return response.ok;
     }
     
-    async function restoreFromGoogleSheets() {
-        if(!currentUser) return;
+    async function deleteTradeFromSupabase(tradeId) {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/trades?id=eq.${tradeId}`, {
+            method: 'DELETE',
+            headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                'Content-Type': 'application/json'
+            }
+        });
         
-        const backupCode = currentUser.toLowerCase() + "_backup";
-        
-        const response = await fetch(`${GOOGLE_WEB_APP_URL}?action=restore&backupCode=${encodeURIComponent(backupCode)}&username=${encodeURIComponent(currentUser)}`);
-        const result = await response.json();
-        
-        if(result.success && result.trades) {
-            currentTrades = result.trades;
-            return { success: true, count: currentTrades.length };
-        }
-        return { success: false };
+        return response.ok;
     }
     
-    // ============================================================
-    // LOCAL STORAGE FALLBACK
-    // ============================================================
-    function saveTradesToLocal() {
-        localStorage.setItem(`trades_${currentUser}`, JSON.stringify(currentTrades));
-    }
-    
-    function loadTradesFromLocal() {
-        const saved = localStorage.getItem(`trades_${currentUser}`);
-        if(saved) {
-            currentTrades = JSON.parse(saved);
-            return true;
-        }
-        return false;
+    async function deleteAllTradesFromSupabase(userId) {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/trades?user_id=eq.${userId}`, {
+            method: 'DELETE',
+            headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        return response.ok;
     }
     
     // ============================================================
@@ -837,7 +851,6 @@
         
         renderCalendar();
         renderTradesTable();
-        saveTradesToLocal();
     }
     
     function renderCalendar() {
@@ -923,11 +936,16 @@
         });
         
         document.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
+            btn.addEventListener('click', async (e) => {
                 const id = parseInt(btn.dataset.id);
-                currentTrades = currentTrades.filter(t => t.id !== id);
-                renderDashboard();
-                alert('✅ Trade deleted!');
+                const success = await deleteTradeFromSupabase(id);
+                if(success) {
+                    currentTrades = currentTrades.filter(t => t.id !== id);
+                    renderDashboard();
+                    alert('✅ Trade deleted from cloud!');
+                } else {
+                    alert('❌ Failed to delete');
+                }
             });
         });
     }
@@ -940,7 +958,7 @@
         });
     }
     
-    function addTrade() {
+    async function addTrade() {
         const date = document.getElementById('tradeDate').value;
         if(!date) { alert('Select date'); return; }
         const symbol = document.getElementById('symbol').value;
@@ -959,18 +977,26 @@
         RULES_LIST.forEach(r => { ruleChecks[r.id] = document.getElementById(r.id).checked; });
         
         const newTrade = {
-            id: Date.now(),
             date, symbol, direction, entry, exit, size, pnl, ruleChecks
         };
         
-        currentTrades.unshift(newTrade);
+        const success = await saveTradeToSupabase(currentUserId, newTrade);
+        if(success) {
+            currentTrades = await loadTradesFromSupabase(currentUserId);
+            renderDashboard();
+            document.getElementById('pnl').value = '';
+            document.getElementById('entryPrice').value = '';
+            document.getElementById('exitPrice').value = '';
+            alert('✅ Trade saved to cloud! Visible on all devices.');
+        } else {
+            alert('❌ Failed to save trade');
+        }
+    }
+    
+    async function syncTrades() {
+        currentTrades = await loadTradesFromSupabase(currentUserId);
         renderDashboard();
-        
-        document.getElementById('pnl').value = '';
-        document.getElementById('entryPrice').value = '';
-        document.getElementById('exitPrice').value = '';
-        
-        alert('✅ Trade saved locally! Use "Backup to Cloud" to save to Google Sheets.');
+        alert(`✅ Synced ${currentTrades.length} trades from cloud!`);
     }
     
     function calculatePositionSize() {
@@ -1065,11 +1091,7 @@
             
             currentUser = username;
             currentUserId = result.user.id;
-            
-            // Try to load from local storage first
-            if(!loadTradesFromLocal()) {
-                currentTrades = [];
-            }
+            currentTrades = await loadTradesFromSupabase(currentUserId);
             
             loadingDiv.style.display = 'none';
             hideAuthScreen();
@@ -1086,7 +1108,7 @@
             renderDashboard();
             
             setTimeout(() => {
-                alert(`✅ Welcome back! Loaded ${currentTrades.length} trades.`);
+                alert(`✅ Welcome back! Loaded ${currentTrades.length} trades from cloud.`);
             }, 500);
         }
     }
@@ -1099,25 +1121,6 @@
         showAuthScreen();
         document.getElementById('loginUsername').value = '';
         document.getElementById('loginPassword').value = '';
-    }
-    
-    async function handleBackup() {
-        const result = await backupToGoogleSheets();
-        if(result && result.success) {
-            alert(`✅ Backed up ${currentTrades.length} trades to Google Sheets!`);
-        } else {
-            alert('❌ Backup failed. Check your connection.');
-        }
-    }
-    
-    async function handleRestore() {
-        const result = await restoreFromGoogleSheets();
-        if(result && result.success) {
-            renderDashboard();
-            alert(`✅ Restored ${result.count} trades from Google Sheets!`);
-        } else {
-            alert('❌ No backup found in Google Sheets. Create a backup first.');
-        }
     }
     
     // Event Listeners
@@ -1134,11 +1137,15 @@
     document.getElementById('authSwitch').addEventListener('click', switchAuthMode);
     document.getElementById('logoutBtn').addEventListener('click', logout);
     document.getElementById('addTradeBtn').addEventListener('click', addTrade);
-    document.getElementById('resetDataBtn').addEventListener('click', () => {
-        if(confirm('⚠️ Delete ALL your trades? This cannot be undone!')) {
-            currentTrades = [];
-            renderDashboard();
-            alert('All trades deleted!');
+    document.getElementById('syncFromCloudBtn').addEventListener('click', syncTrades);
+    document.getElementById('resetDataBtn').addEventListener('click', async () => {
+        if(confirm('⚠️ Delete ALL your trades from cloud? This cannot be undone!')) {
+            const success = await deleteAllTradesFromSupabase(currentUserId);
+            if(success) {
+                currentTrades = [];
+                renderDashboard();
+                alert('All trades deleted from cloud!');
+            }
         }
     });
     document.getElementById('prevMonthBtn').addEventListener('click', () => {
@@ -1151,8 +1158,6 @@
     });
     document.getElementById('calculateRiskBtn').addEventListener('click', calculatePositionSize);
     document.getElementById('calculatePipBtn').addEventListener('click', calculatePipValue);
-    document.getElementById('backupToCloudBtn').addEventListener('click', handleBackup);
-    document.getElementById('restoreFromCloudBtn').addEventListener('click', handleRestore);
     
     showAuthScreen();
 </script>
