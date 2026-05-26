@@ -311,7 +311,6 @@
             font-weight: bold;
         }
 
-        /* Calendar Day Box Styles - COLOR CODED */
         .calendar-day {
             background: rgba(15, 23, 42, 0.5);
             border-radius: 12px;
@@ -323,24 +322,14 @@
             border: 1px solid transparent;
         }
 
-        /* Profitable Day - GREEN BOX */
         .calendar-day.profit-day {
             background: rgba(74, 222, 128, 0.2);
             border: 1px solid #4ade80;
-            box-shadow: 0 0 5px rgba(74, 222, 128, 0.3);
         }
 
-        /* Losing Day - RED BOX */
         .calendar-day.loss-day {
             background: rgba(248, 113, 113, 0.2);
             border: 1px solid #f87171;
-            box-shadow: 0 0 5px rgba(248, 113, 113, 0.3);
-        }
-
-        /* No Trade Day - Normal (no change) */
-        .calendar-day.no-trade-day {
-            background: rgba(15, 23, 42, 0.5);
-            border: 1px solid transparent;
         }
 
         .calendar-day:hover {
@@ -360,7 +349,6 @@
 
         .day-pnl.positive { color: #4ade80; }
         .day-pnl.negative { color: #f87171; }
-        .day-pnl { font-size: 0.75rem; font-weight: bold; }
 
         .trade-section {
             display: flex;
@@ -418,10 +406,6 @@
             background: #f87171;
             color: white;
         }
-        
-        .pnl-toggle-btn:hover {
-            transform: scale(1.02);
-        }
 
         .rule-row {
             display: flex;
@@ -459,7 +443,6 @@
 
         .delete-btn:hover {
             background: #dc2626;
-            transform: scale(1.05);
         }
 
         .footer {
@@ -556,18 +539,18 @@
             <h2>📊 TradeJournal</h2>
             <h3 id="authTitle">Login</h3>
             <div class="form-group">
-                <label>👤 Username</label>
+                <label>Username</label>
                 <input type="text" id="loginUsername" placeholder="Enter username">
             </div>
             <div class="form-group">
-                <label>🔒 Password</label>
+                <label>Password</label>
                 <div class="password-field">
                     <input type="password" id="loginPassword" placeholder="Enter password">
                     <button type="button" class="password-toggle" id="togglePasswordBtn">👁️</button>
                 </div>
             </div>
-            <div id="authLoading" class="loading-msg" style="display:none;">⏳ Connecting...</div>
-            <button id="authSubmitBtn">Login →</button>
+            <div id="authLoading" class="loading-msg" style="display:none;">Loading...</div>
+            <button id="authSubmitBtn">Login</button>
             <div class="auth-switch" id="authSwitch">
                 New here? <span>Create an account</span>
             </div>
@@ -578,27 +561,27 @@
 
     <div id="mainApp" class="main-app">
         <div class="header">
-            <h1>📒 Trade Journal <small>🎨 Color Coded Calendar</small></h1>
+            <h1>Trade Journal</h1>
             <div class="profile-section">
                 <div class="profile-trigger" id="profileTrigger">
-                    <div class="profile-avatar" id="profileAvatar">👤</div>
+                    <div class="profile-avatar" id="profileAvatar">U</div>
                     <span id="profileName">User</span>
                     <span>▼</span>
                 </div>
                 <div class="dropdown-menu" id="dropdownMenu">
                     <div class="dropdown-header">
-                        <div class="large-avatar" id="largeAvatar">👤</div>
+                        <div class="large-avatar" id="largeAvatar">U</div>
                         <h3 id="dropdownUsername">Username</h3>
                     </div>
                     <div class="dropdown-section">
-                        <h4>📊 Statistics</h4>
+                        <h4>Statistics</h4>
                         <div class="info-row"><span>Total Trades:</span><span id="profileTotalTrades">0</span></div>
                         <div class="info-row"><span>Win Rate:</span><span id="profileWinRate">0%</span></div>
                         <div class="info-row"><span>Total P&L:</span><span id="profileTotalPnL">$0</span></div>
                         <div class="info-row"><span>Avg Consistency:</span><span id="profileAvgConsistency">0%</span></div>
                     </div>
                     <div class="dropdown-section">
-                        <h4>📏 Position Calculator</h4>
+                        <h4>Position Calculator</h4>
                         <div class="calc-group"><label>Balance ($)</label><input type="number" id="accountBalance" value="10000"></div>
                         <div class="calc-group"><label>Risk %</label><input type="number" id="riskPercent" value="1" step="0.5"></div>
                         <div class="calc-group"><label>Stop Loss (pips)</label><input type="number" id="stopLossPips" value="20"></div>
@@ -606,25 +589,25 @@
                         <div id="riskResult" class="calc-result">Position Size: -- lots</div>
                     </div>
                     <div class="dropdown-section">
-                        <h4>💵 Pip Value</h4>
+                        <h4>Pip Value</h4>
                         <div class="calc-group"><label>Lot Size</label><input type="number" id="lotSize" value="1" step="0.1"></div>
                         <button id="calculatePipBtn" style="background:#334155;">Calculate</button>
                         <div id="pipResult" class="calc-result">Value per pip: $--</div>
                     </div>
                     <div class="dropdown-section">
-                        <button id="logoutBtn" style="background:#ef4444;">🚪 Logout</button>
+                        <button id="logoutBtn" style="background:#ef4444;">Logout</button>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="dashboard">
-            <div class="card"><h3>📊 Total Trades</h3><div class="value" id="totalTrades">0</div></div>
-            <div class="card"><h3>✅ Avg. Consistency</h3><div class="value" id="avgConsistency">0%</div></div>
-            <div class="card"><h3>🏆 Win Rate</h3><div class="value" id="winRate">0%</div></div>
-            <div class="card"><h3>📈 Total P&L</h3><div class="value" id="totalPnL">$0</div></div>
-            <div class="card"><h3>🔥 Streak</h3><div class="value" id="streak">0</div></div>
-            <div class="card"><h3>📅 Best Day</h3><div class="value" id="bestDay">-</div></div>
+            <div class="card"><h3>Total Trades</h3><div class="value" id="totalTrades">0</div></div>
+            <div class="card"><h3>Avg. Consistency</h3><div class="value" id="avgConsistency">0%</div></div>
+            <div class="card"><h3>Win Rate</h3><div class="value" id="winRate">0%</div></div>
+            <div class="card"><h3>Total P&L</h3><div class="value" id="totalPnL">$0</div></div>
+            <div class="card"><h3>Streak</h3><div class="value" id="streak">0</div></div>
+            <div class="card"><h3>Best Day</h3><div class="value" id="bestDay">-</div></div>
         </div>
 
         <div class="calendar-section">
@@ -639,7 +622,7 @@
 
         <div class="trade-section">
             <div class="trade-form">
-                <h3>✍️ Log New Trade</h3>
+                <h3>Log New Trade</h3>
                 <input type="datetime-local" id="tradeDate">
                 <input type="text" id="symbol" placeholder="Symbol" value="EUR/USD">
                 <select id="direction">
@@ -649,25 +632,23 @@
                 <input type="number" step="any" id="entryPrice" placeholder="Entry Price">
                 <input type="number" step="any" id="exitPrice" placeholder="Exit Price">
                 <input type="number" step="any" id="size" placeholder="Position Size">
-                
                 <div class="pnl-container">
                     <input type="number" step="any" id="pnl" placeholder="P&L Amount ($)">
                     <button type="button" id="pnlToggleBtn" class="pnl-toggle-btn positive">+ Positive</button>
                 </div>
-                
-                <h4>⚖️ Consistency Rules</h4>
+                <h4>Consistency Rules</h4>
                 <div id="rulesContainer"></div>
-                <button id="addTradeBtn">➕ Add Trade</button>
-                <button id="resetDataBtn" style="background:#334155;">🗑️ Delete All Trades</button>
+                <button id="addTradeBtn">Add Trade</button>
+                <button id="resetDataBtn" style="background:#334155;">Delete All Trades</button>
             </div>
             <div class="trade-history">
-                <h3>📋 Trade History</h3>
+                <h3>Trade History</h3>
                 <div style="overflow-x:auto;">
                     <table id="tradesTable">
                         <thead>
                             <tr><th>Date</th><th>Symbol</th><th>Dir</th><th>Entry/Exit</th><th>P&L</th><th>Rules</th><th>Adherence</th><th>Action</th></tr>
                         </thead>
-                        <tbody id="tradesBody"><tr><td colspan="8">No trades yet. Add your first trade!</td</tr></tbody>
+                        <tbody id="tradesBody"><tr><td colspan="8">No trades yet. Add your first trade!</td</tbody>
                     </table>
                 </div>
             </div>
@@ -675,29 +656,30 @@
 
         <div class="footer">
             <div class="footer-grid">
-                <div class="footer-card"><h3>📚 Forex eBooks</h3>
+                <div class="footer-card">
+                    <h3>Forex eBooks</h3>
                     <ul class="ebook-list">
-                        <li>📖 <a href="https://www.babypips.com/learn/forex" target="_blank">BabyPips School</a></li>
-                        <li>📘 <a href="https://www.investopedia.com/articles/forex/11/forex-trading-ebook.asp" target="_blank">Investopedia Guide</a></li>
+                        <li><a href="https://www.babypips.com/learn/forex" target="_blank">BabyPips School</a></li>
+                        <li><a href="https://www.investopedia.com/articles/forex/11/forex-trading-ebook.asp" target="_blank">Investopedia Guide</a></li>
                     </ul>
                 </div>
                 <div class="footer-card" onclick="window.open('http://live.ofinancial.markets/signup/faT4NlLK', '_blank')">
-                    <h3>🏆 Preferred Broker</h3>
+                    <h3>Preferred Broker</h3>
                     <div class="featured-broker">
                         <div style="font-size:2rem;">🏦</div>
                         <div style="font-weight:bold; color:#facc15;">OFinancial Markets</div>
                         <div>★★★★★ 5.0/5</div>
-                        <div style="margin-top:8px; background:#facc15; color:#0f172a; padding:5px; border-radius:25px;">👉 OPEN ACCOUNT 👈</div>
+                        <div style="margin-top:8px; background:#facc15; color:#0f172a; padding:5px; border-radius:25px;">OPEN ACCOUNT</div>
                     </div>
                 </div>
                 <div class="footer-card">
-                    <h3>⭐ Reviews</h3>
+                    <h3>Reviews</h3>
                     <div class="review-item"><div class="review-stars">★★★★★</div>"Best trading journal ever!"<br><small>- Michael T.</small></div>
                     <div class="review-item"><div class="review-stars">★★★★½</div>"Love the consistency tracker!"<br><small>- Sarah K.</small></div>
-                    <a href="https://wa.me/message/KGIKY7FHNWFWE1" target="_blank" class="whatsapp-contact">💬 WhatsApp Support</a>
+                    <a href="https://wa.me/message/KGIKY7FHNWFWE1" target="_blank" class="whatsapp-contact">WhatsApp Support</a>
                 </div>
             </div>
-            <div class="footer-bottom">© 2026 TradeJournal - Color Coded Calendar | <a href="http://live.ofinancial.markets/signup/faT4NlLK" target="_blank" style="color:#facc15;">Trade with OFinancial Markets</a></div>
+            <div class="footer-bottom">© 2026 TradeJournal | <a href="http://live.ofinancial.markets/signup/faT4NlLK" target="_blank" style="color:#facc15;">Trade with OFinancial Markets</a></div>
         </div>
     </div>
 </div>
@@ -732,7 +714,6 @@
             },
             body: JSON.stringify({ username: username.toLowerCase(), password: hashedPwd })
         });
-        
         if(!response.ok) {
             const error = await response.json();
             if(error.code === '23505') return { success: false, error: 'Username already exists' };
@@ -752,7 +733,6 @@
                 'Content-Type': 'application/json'
             }
         });
-        
         if(!response.ok) return { success: false, error: 'Login failed' };
         const data = await response.json();
         if(!data || data.length === 0) return { success: false, error: 'Invalid username or password' };
@@ -851,13 +831,11 @@
         const winRate = total === 0 ? 0 : Math.round((winning / total) * 100);
         let totalAdherence = currentTrades.reduce((sum, t) => sum + calculateAdherence(t.ruleChecks), 0);
         const avgConsistency = total === 0 ? 0 : Math.round(totalAdherence / total);
-        
         let streak = 0;
         for(let i = currentTrades.length - 1; i >= 0; i--) {
             if(calculateAdherence(currentTrades[i].ruleChecks) === 100) streak++;
             else break;
         }
-        
         let bestDay = '-';
         const daily = {};
         currentTrades.forEach(t => { const d = t.date.split('T')[0]; daily[d] = (daily[d] || 0) + Number(t.pnl); });
@@ -884,8 +862,6 @@
         const year = currentViewDate.getFullYear();
         const month = currentViewDate.getMonth();
         const monthData = {};
-        
-        // Calculate daily totals
         currentTrades.forEach(t => {
             const d = new Date(t.date);
             if(d.getFullYear() === year && d.getMonth() === month) {
@@ -916,18 +892,15 @@
             const data = monthData[ds];
             const totalPnL = data ? data.totalPnL : 0;
             const selected = selectedDate === ds;
-            
-            // Determine box color class based on P&L
-            let boxClass = 'no-trade-day';
+            let boxClass = '';
             if(data && data.count > 0) {
                 if(totalPnL > 0) boxClass = 'profit-day';
                 else if(totalPnL < 0) boxClass = 'loss-day';
             }
-            
             html += `<div class="calendar-day ${boxClass} ${selected ? 'selected' : ''}" data-date="${ds}">
                 <div class="day-number">${day}</div>
                 ${data ? `<div class="day-pnl ${totalPnL >= 0 ? 'positive' : 'negative'}">${totalPnL >= 0 ? '+' : ''}$${Math.abs(totalPnL).toFixed(0)}</div>
-                <div style="font-size:0.7rem;">📊 ${data.count}</div>` : '<div style="font-size:0.7rem; opacity:0.5;">📭 No trades</div>'}
+                <div style="font-size:0.7rem;">📊 ${data.count}</div>` : '<div style="font-size:0.7rem; opacity:0.5;">No trades</div>'}
             </div>`;
             day++;
         }
@@ -940,9 +913,9 @@
                 const dayTrades = currentTrades.filter(t => t.date.split('T')[0] === selectedDate);
                 if(dayTrades.length) {
                     const total = dayTrades.reduce((s,t)=>s+Number(t.pnl),0);
-                    document.getElementById('dayDetailPanel').innerHTML = `<h4>📅 ${selectedDate}</h4>
-                        <div style="display:flex; gap:15px; margin-bottom:15px;"><div>💰 P&L: <strong style="color:${total>=0?'#4ade80':'#f87171'}">${total>=0?'+':''}$${total.toFixed(2)}</strong></div>
-                        <div>📊 Trades: ${dayTrades.length}</div></div>
+                    document.getElementById('dayDetailPanel').innerHTML = `<h4>${selectedDate}</h4>
+                        <div style="display:flex; gap:15px; margin-bottom:15px;"><div>P&L: <strong style="color:${total>=0?'#4ade80':'#f87171'}">${total>=0?'+':''}$${total.toFixed(2)}</strong></div>
+                        <div>Trades: ${dayTrades.length}</div></div>
                         ${dayTrades.map(t => `<div style="padding:8px; background:rgba(15,23,42,0.5); margin:5px 0; border-radius:8px;">${new Date(t.date).toLocaleTimeString()} - ${t.symbol} ${t.direction} - ${t.pnl>=0?'+':''}$${t.pnl} (${calculateAdherence(t.ruleChecks)}% consistent)</div>`).join('')}`;
                     document.getElementById('dayDetailPanel').style.display = 'block';
                 } else document.getElementById('dayDetailPanel').style.display = 'none';
@@ -953,11 +926,10 @@
     async function renderTradesTable() {
         const tbody = document.getElementById('tradesBody');
         if(!currentTrades.length) {
-            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center">📭 No trades yet. Add your first trade!</td</tr>';
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center">No trades yet. Add your first trade!</td</tbody>';
             return;
         }
         tbody.innerHTML = '';
-        
         for(const t of [...currentTrades].reverse()) {
             const ruleCount = Object.values(t.ruleChecks).filter(v => v === true).length;
             const adherence = calculateAdherence(t.ruleChecks);
@@ -965,12 +937,12 @@
             row.innerHTML = `
                 <td>${new Date(t.date).toLocaleString()}</td>
                 <td><strong>${t.symbol}</strong></td>
-                <td>${t.direction === 'Long (Buy)' ? '🟢 Long' : '🔴 Short'}</td>
+                <td>${t.direction === 'Long (Buy)' ? 'Long' : 'Short'}</td>
                 <td>${t.entry} → ${t.exit}</td>
                 <td style="color:${Number(t.pnl) >= 0 ? '#4ade80' : '#f87171'}; font-weight:bold;">${Number(t.pnl) >= 0 ? '+' : ''}$${Math.abs(Number(t.pnl)).toFixed(2)}</td>
                 <td>${ruleCount}/${RULES_LIST.length}</td>
                 <td>${adherence}%</td>
-                <td><button class="delete-btn" data-id="${t.id}">❌ Delete</button></td>
+                <td><button class="delete-btn" data-id="${t.id}">Delete</button></td>
             `;
             tbody.appendChild(row);
         }
@@ -978,17 +950,15 @@
         document.querySelectorAll('.delete-btn').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 e.preventDefault();
-                e.stopPropagation();
                 const tradeId = btn.getAttribute('data-id');
-                
-                if(confirm('Are you sure you want to delete this trade?')) {
+                if(confirm('Delete this trade?')) {
                     const success = await deleteTrade(tradeId);
                     if(success) {
                         currentTrades = currentTrades.filter(t => t.id != tradeId);
-                        await renderDashboard();
-                        alert('✅ Trade deleted successfully!');
+                        renderDashboard();
+                        alert('Trade deleted!');
                     } else {
-                        alert('❌ Failed to delete trade');
+                        alert('Failed to delete');
                     }
                 }
             });
@@ -999,7 +969,7 @@
         const container = document.getElementById('rulesContainer');
         container.innerHTML = '';
         RULES_LIST.forEach(rule => {
-            container.innerHTML += `<div class="rule-row"><input type="checkbox" id="${rule.id}" checked><label>✅ ${rule.text}</label></div>`;
+            container.innerHTML += `<div class="rule-row"><input type="checkbox" id="${rule.id}" checked><label>${rule.text}</label></div>`;
         });
     }
     
@@ -1007,12 +977,10 @@
         const pnlInput = document.getElementById('pnl');
         const toggleBtn = document.getElementById('pnlToggleBtn');
         const currentValue = parseFloat(pnlInput.value);
-        
         if(!isNaN(currentValue) && currentValue !== 0) {
             pnlInput.value = -currentValue;
             pnlSign = pnlSign === 1 ? -1 : 1;
         }
-        
         if(pnlSign === 1 || (pnlInput.value && parseFloat(pnlInput.value) > 0)) {
             toggleBtn.className = 'pnl-toggle-btn positive';
             toggleBtn.innerHTML = '+ Positive';
@@ -1025,7 +993,6 @@
     function setupPnLMonitor() {
         const pnlInput = document.getElementById('pnl');
         const toggleBtn = document.getElementById('pnlToggleBtn');
-        
         pnlInput.addEventListener('input', function() {
             const value = parseFloat(this.value);
             if(!isNaN(value)) {
@@ -1051,18 +1018,14 @@
         const exit = parseFloat(document.getElementById('exitPrice').value);
         const size = parseFloat(document.getElementById('size').value);
         let pnl = parseFloat(document.getElementById('pnl').value);
-        
         if(isNaN(entry) || isNaN(exit) || isNaN(size) || isNaN(pnl)) {
             alert('Fill all fields');
             return;
         }
-        
         const ruleChecks = {};
         RULES_LIST.forEach(r => { ruleChecks[r.id] = document.getElementById(r.id).checked; });
-        
         const newTrade = { date, symbol, direction, entry, exit, size, pnl, ruleChecks };
         const success = await saveTrade(newTrade);
-        
         if(success) {
             currentTrades = await loadTrades();
             renderDashboard();
@@ -1074,9 +1037,9 @@
             toggleBtn.className = 'pnl-toggle-btn positive';
             toggleBtn.innerHTML = '+ Positive';
             pnlSign = 1;
-            alert('✅ Trade saved to cloud!');
+            alert('Trade saved!');
         } else {
-            alert('❌ Failed to save trade');
+            alert('Failed to save trade');
         }
     }
     
@@ -1091,13 +1054,13 @@
         const riskAmount = balance * (riskPercent / 100);
         const pipValue = 10;
         const positionSize = riskAmount / (stopLoss * pipValue);
-        document.getElementById('riskResult').innerHTML = `📊 Position Size: ${positionSize.toFixed(2)} lots<br>💰 Risk Amount: $${riskAmount.toFixed(2)}`;
+        document.getElementById('riskResult').innerHTML = `Position Size: ${positionSize.toFixed(2)} lots<br>Risk Amount: $${riskAmount.toFixed(2)}`;
     }
     
     function calculatePipValue() {
         const lots = parseFloat(document.getElementById('lotSize').value);
         const valuePerPip = lots * 10;
-        document.getElementById('pipResult').innerHTML = `💵 Value per pip: $${valuePerPip.toFixed(2)}<br>📈 10 pips: $${(valuePerPip * 10).toFixed(2)}`;
+        document.getElementById('pipResult').innerHTML = `Value per pip: $${valuePerPip.toFixed(2)}<br>10 pips: $${(valuePerPip * 10).toFixed(2)}`;
     }
     
     document.getElementById('togglePasswordBtn')?.addEventListener('click', function(e) {
@@ -1125,8 +1088,8 @@
     function switchAuthMode() {
         authMode = authMode === 'login' ? 'register' : 'login';
         document.getElementById('authTitle').innerText = authMode === 'login' ? 'Login' : 'Create Account';
-        document.getElementById('authSubmitBtn').innerHTML = authMode === 'login' ? 'Login →' : 'Register →';
-        document.getElementById('authSwitch').innerHTML = authMode === 'login' ? 'New here? <span>Create an account</span>' : 'Already have an account? <span>Login</span>';
+        document.getElementById('authSubmitBtn').innerHTML = authMode === 'login' ? 'Login' : 'Register';
+        document.getElementById('authSwitch').innerHTML = authMode === 'login' ? 'New here? Create an account' : 'Already have an account? Login';
         document.getElementById('authError').style.display = 'none';
         document.getElementById('authSuccess').style.display = 'none';
     }
@@ -1137,17 +1100,14 @@
         const errorDiv = document.getElementById('authError');
         const successDiv = document.getElementById('authSuccess');
         const loadingDiv = document.getElementById('authLoading');
-        
         if(!username || !password) {
             errorDiv.innerText = 'Please fill all fields';
             errorDiv.style.display = 'block';
             return;
         }
-        
         loadingDiv.style.display = 'block';
         errorDiv.style.display = 'none';
         successDiv.style.display = 'none';
-        
         if(authMode === 'register') {
             const result = await registerUser(username, password);
             if(!result.success) {
@@ -1156,7 +1116,7 @@
                 errorDiv.style.display = 'block';
                 return;
             }
-            successDiv.innerText = '✅ Account created! Please login.';
+            successDiv.innerText = 'Account created! Please login.';
             successDiv.style.display = 'block';
             loadingDiv.style.display = 'none';
             authMode = 'login';
@@ -1170,11 +1130,9 @@
                 errorDiv.style.display = 'block';
                 return;
             }
-            
             currentUser = username;
             currentUserId = result.user.id;
             currentTrades = await loadTrades();
-            
             loadingDiv.style.display = 'none';
             hideAuthScreen();
             document.getElementById('mainApp').style.display = 'block';
@@ -1182,16 +1140,14 @@
             document.getElementById('dropdownUsername').innerText = currentUser;
             document.getElementById('profileAvatar').innerHTML = currentUser.charAt(0).toUpperCase();
             document.getElementById('largeAvatar').innerHTML = currentUser.charAt(0).toUpperCase();
-            
             const now = new Date();
             now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
             document.getElementById('tradeDate').value = now.toISOString().slice(0, 16);
             buildRuleChecklist();
             setupPnLMonitor();
             renderDashboard();
-            
             setTimeout(() => {
-                alert(`✅ Welcome back! Loaded ${currentTrades.length} trades.`);
+                alert(`Welcome back! Loaded ${currentTrades.length} trades.`);
             }, 500);
         }
     }
@@ -1218,12 +1174,12 @@
     document.getElementById('logoutBtn').addEventListener('click', logout);
     document.getElementById('addTradeBtn').addEventListener('click', addTrade);
     document.getElementById('resetDataBtn').addEventListener('click', async () => {
-        if(confirm('⚠️ Delete ALL your trades from cloud? This cannot be undone!')) {
+        if(confirm('Delete ALL your trades? This cannot be undone!')) {
             const success = await deleteAllTrades();
             if(success) {
                 currentTrades = [];
                 renderDashboard();
-                alert('All trades deleted from cloud!');
+                alert('All trades deleted!');
             }
         }
     });
