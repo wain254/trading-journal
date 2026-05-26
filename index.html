@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TradeJournal - Supabase Cloud (Full Sync)</title>
+    <title>TradeJournal - Color Coded Calendar</title>
     <style>
         * {
             box-sizing: border-box;
@@ -23,7 +23,6 @@
             margin: 0 auto;
         }
 
-        /* Login Panel */
         .auth-overlay {
             position: fixed;
             top: 0;
@@ -130,7 +129,6 @@
             transform: translateY(-2px);
         }
 
-        /* Main App */
         .main-app {
             display: none;
         }
@@ -313,6 +311,7 @@
             font-weight: bold;
         }
 
+        /* Calendar Day Box Styles - COLOR CODED */
         .calendar-day {
             background: rgba(15, 23, 42, 0.5);
             border-radius: 12px;
@@ -321,15 +320,37 @@
             cursor: pointer;
             transition: all 0.2s;
             text-align: center;
+            border: 1px solid transparent;
+        }
+
+        /* Profitable Day - GREEN BOX */
+        .calendar-day.profit-day {
+            background: rgba(74, 222, 128, 0.2);
+            border: 1px solid #4ade80;
+            box-shadow: 0 0 5px rgba(74, 222, 128, 0.3);
+        }
+
+        /* Losing Day - RED BOX */
+        .calendar-day.loss-day {
+            background: rgba(248, 113, 113, 0.2);
+            border: 1px solid #f87171;
+            box-shadow: 0 0 5px rgba(248, 113, 113, 0.3);
+        }
+
+        /* No Trade Day - Normal (no change) */
+        .calendar-day.no-trade-day {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid transparent;
         }
 
         .calendar-day:hover {
             transform: translateY(-2px);
+            border-color: #facc15;
         }
 
         .calendar-day.selected {
-            border: 1px solid #facc15;
-            background: rgba(250, 204, 21, 0.1);
+            border-color: #facc15;
+            background: rgba(250, 204, 21, 0.2);
         }
 
         .day-number {
@@ -339,6 +360,7 @@
 
         .day-pnl.positive { color: #4ade80; }
         .day-pnl.negative { color: #f87171; }
+        .day-pnl { font-size: 0.75rem; font-weight: bold; }
 
         .trade-section {
             display: flex;
@@ -366,6 +388,41 @@
             margin-bottom: 12px;
         }
 
+        .pnl-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .pnl-container input {
+            flex: 2;
+            margin-bottom: 0;
+        }
+        
+        .pnl-toggle-btn {
+            flex: 1;
+            margin: 0;
+            background: #334155;
+            color: white;
+            padding: 10px 12px;
+            font-size: 0.9rem;
+        }
+        
+        .pnl-toggle-btn.positive {
+            background: #4ade80;
+            color: #0f172a;
+        }
+        
+        .pnl-toggle-btn.negative {
+            background: #f87171;
+            color: white;
+        }
+        
+        .pnl-toggle-btn:hover {
+            transform: scale(1.02);
+        }
+
         .rule-row {
             display: flex;
             align-items: center;
@@ -391,10 +448,18 @@
         .delete-btn {
             background: #ef4444;
             color: white;
-            padding: 4px 10px;
+            padding: 6px 12px;
             width: auto;
             margin: 0;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            border-radius: 8px;
+            border: none;
+        }
+
+        .delete-btn:hover {
+            background: #dc2626;
+            transform: scale(1.05);
         }
 
         .footer {
@@ -476,25 +541,16 @@
             font-size: 0.7rem;
         }
 
-        .cloud-status {
-            background: rgba(74, 222, 128, 0.1);
-            border: 1px solid #4ade80;
-            border-radius: 12px;
-            padding: 8px;
-            margin-bottom: 12px;
-            text-align: center;
-            font-size: 0.75rem;
-        }
-
         @media (max-width: 900px) {
             .calendar-day { min-height: 70px; font-size: 0.7rem; }
             .trade-history { min-width: 100%; }
+            .pnl-container { flex-direction: column; }
+            .pnl-toggle-btn { width: 100%; }
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <!-- LOGIN SCREEN -->
     <div id="authScreen" class="auth-overlay">
         <div class="auth-container">
             <h2>📊 TradeJournal</h2>
@@ -510,7 +566,7 @@
                     <button type="button" class="password-toggle" id="togglePasswordBtn">👁️</button>
                 </div>
             </div>
-            <div id="authLoading" class="loading-msg" style="display:none;">⏳ Connecting to cloud...</div>
+            <div id="authLoading" class="loading-msg" style="display:none;">⏳ Connecting...</div>
             <button id="authSubmitBtn">Login →</button>
             <div class="auth-switch" id="authSwitch">
                 New here? <span>Create an account</span>
@@ -520,10 +576,9 @@
         </div>
     </div>
 
-    <!-- MAIN APP -->
     <div id="mainApp" class="main-app">
         <div class="header">
-            <h1>📒 Trade Journal <small>☁️ Full Cloud Sync</small></h1>
+            <h1>📒 Trade Journal <small>🎨 Color Coded Calendar</small></h1>
             <div class="profile-section">
                 <div class="profile-trigger" id="profileTrigger">
                     <div class="profile-avatar" id="profileAvatar">👤</div>
@@ -534,11 +589,6 @@
                     <div class="dropdown-header">
                         <div class="large-avatar" id="largeAvatar">👤</div>
                         <h3 id="dropdownUsername">Username</h3>
-                    </div>
-                    <div class="dropdown-section">
-                        <h4>☁️ Cloud Status</h4>
-                        <div id="cloudStatus" class="cloud-status">✅ Trades save directly to cloud</div>
-                        <button id="syncFromCloudBtn" style="background:#22c55e;">🔄 Sync Trades</button>
                     </div>
                     <div class="dropdown-section">
                         <h4>📊 Statistics</h4>
@@ -568,7 +618,6 @@
             </div>
         </div>
 
-        <!-- Dashboard -->
         <div class="dashboard">
             <div class="card"><h3>📊 Total Trades</h3><div class="value" id="totalTrades">0</div></div>
             <div class="card"><h3>✅ Avg. Consistency</h3><div class="value" id="avgConsistency">0%</div></div>
@@ -578,7 +627,6 @@
             <div class="card"><h3>📅 Best Day</h3><div class="value" id="bestDay">-</div></div>
         </div>
 
-        <!-- Calendar -->
         <div class="calendar-section">
             <div class="calendar-header" style="display:flex; justify-content:space-between; margin-bottom:20px;">
                 <button id="prevMonthBtn" style="width:auto; padding:8px 16px;">◀ Prev</button>
@@ -589,7 +637,6 @@
             <div id="dayDetailPanel" style="display:none; background:rgba(15,23,42,0.8); border-radius:16px; padding:16px; margin-top:16px;"></div>
         </div>
 
-        <!-- Trade Section -->
         <div class="trade-section">
             <div class="trade-form">
                 <h3>✍️ Log New Trade</h3>
@@ -602,28 +649,33 @@
                 <input type="number" step="any" id="entryPrice" placeholder="Entry Price">
                 <input type="number" step="any" id="exitPrice" placeholder="Exit Price">
                 <input type="number" step="any" id="size" placeholder="Position Size">
-                <input type="number" step="any" id="pnl" placeholder="P&L ($)">
+                
+                <div class="pnl-container">
+                    <input type="number" step="any" id="pnl" placeholder="P&L Amount ($)">
+                    <button type="button" id="pnlToggleBtn" class="pnl-toggle-btn positive">+ Positive</button>
+                </div>
+                
                 <h4>⚖️ Consistency Rules</h4>
                 <div id="rulesContainer"></div>
-                <button id="addTradeBtn">➕ Add Trade (Auto Saves to Cloud)</button>
+                <button id="addTradeBtn">➕ Add Trade</button>
                 <button id="resetDataBtn" style="background:#334155;">🗑️ Delete All Trades</button>
             </div>
             <div class="trade-history">
                 <h3>📋 Trade History</h3>
                 <div style="overflow-x:auto;">
-                    <table>
-                        <thead><tr><th>Date</th><th>Symbol</th><th>Dir</th><th>Entry/Exit</th><th>P&L</th><th>Rules</th><th>Adherence</th><th>Action</th></tr></thead>
-                        <tbody id="tradesBody"><tr><td colspan="8">No trades yet. Add your first trade!</td></tr></tbody>
+                    <table id="tradesTable">
+                        <thead>
+                            <tr><th>Date</th><th>Symbol</th><th>Dir</th><th>Entry/Exit</th><th>P&L</th><th>Rules</th><th>Adherence</th><th>Action</th></tr>
+                        </thead>
+                        <tbody id="tradesBody"><tr><td colspan="8">No trades yet. Add your first trade!</td</tr></tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- Footer -->
         <div class="footer">
             <div class="footer-grid">
-                <div class="footer-card">
-                    <h3>📚 Forex eBooks</h3>
+                <div class="footer-card"><h3>📚 Forex eBooks</h3>
                     <ul class="ebook-list">
                         <li>📖 <a href="https://www.babypips.com/learn/forex" target="_blank">BabyPips School</a></li>
                         <li>📘 <a href="https://www.investopedia.com/articles/forex/11/forex-trading-ebook.asp" target="_blank">Investopedia Guide</a></li>
@@ -645,15 +697,12 @@
                     <a href="https://wa.me/message/KGIKY7FHNWFWE1" target="_blank" class="whatsapp-contact">💬 WhatsApp Support</a>
                 </div>
             </div>
-            <div class="footer-bottom">© 2026 TradeJournal - Full Cloud Sync | <a href="http://live.ofinancial.markets/signup/faT4NlLK" target="_blank" style="color:#facc15;">Trade with OFinancial Markets</a></div>
+            <div class="footer-bottom">© 2026 TradeJournal - Color Coded Calendar | <a href="http://live.ofinancial.markets/signup/faT4NlLK" target="_blank" style="color:#facc15;">Trade with OFinancial Markets</a></div>
         </div>
     </div>
 </div>
 
 <script>
-    // ============================================================
-    // SUPABASE CONFIGURATION
-    // ============================================================
     const SUPABASE_URL = 'https://xrpfhfswshaxvgnujrbf.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhycGZoZnN3c2hheHZnbnVqcmJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Mzg1NDIsImV4cCI6MjA5NTMxNDU0Mn0.af9zzRhqhv6ojfPsRjM1eGpWG-i6SxbsO_HpeZv2tUs';
     
@@ -662,8 +711,8 @@
     let currentTrades = [];
     let currentViewDate = new Date();
     let selectedDate = null;
+    let pnlSign = 1;
     
-    // Password hashing
     async function hashPassword(password) {
         const encoder = new TextEncoder();
         const data = encoder.encode(password + "trade2024secure");
@@ -671,12 +720,8 @@
         return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
     }
     
-    // ============================================================
-    // SUPABASE API FUNCTIONS
-    // ============================================================
     async function registerUser(username, password) {
         const hashedPwd = await hashPassword(password);
-        
         const response = await fetch(`${SUPABASE_URL}/rest/v1/users`, {
             method: 'POST',
             headers: {
@@ -691,16 +736,14 @@
         if(!response.ok) {
             const error = await response.json();
             if(error.code === '23505') return { success: false, error: 'Username already exists' };
-            return { success: false, error: error.message || 'Registration failed' };
+            return { success: false, error: 'Registration failed' };
         }
-        
         const data = await response.json();
         return { success: true, user: data[0] };
     }
     
     async function loginUser(username, password) {
         const hashedPwd = await hashPassword(password);
-        
         const response = await fetch(`${SUPABASE_URL}/rest/v1/users?username=eq.${encodeURIComponent(username.toLowerCase())}&password=eq.${encodeURIComponent(hashedPwd)}&select=*`, {
             method: 'GET',
             headers: {
@@ -710,20 +753,14 @@
             }
         });
         
-        if(!response.ok) {
-            return { success: false, error: 'Login failed' };
-        }
-        
+        if(!response.ok) return { success: false, error: 'Login failed' };
         const data = await response.json();
-        if(!data || data.length === 0) {
-            return { success: false, error: 'Invalid username or password' };
-        }
-        
+        if(!data || data.length === 0) return { success: false, error: 'Invalid username or password' };
         return { success: true, user: data[0] };
     }
     
-    async function loadTradesFromSupabase(userId) {
-        const response = await fetch(`${SUPABASE_URL}/rest/v1/trades?user_id=eq.${userId}&select=*`, {
+    async function loadTrades() {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/trades?user_id=eq.${currentUserId}&select=*`, {
             method: 'GET',
             headers: {
                 'apikey': SUPABASE_ANON_KEY,
@@ -731,11 +768,7 @@
                 'Content-Type': 'application/json'
             }
         });
-        
-        if(!response.ok) {
-            return [];
-        }
-        
+        if(!response.ok) return [];
         const data = await response.json();
         return data.map(t => ({
             id: t.id,
@@ -750,7 +783,7 @@
         }));
     }
     
-    async function saveTradeToSupabase(userId, trade) {
+    async function saveTrade(trade) {
         const response = await fetch(`${SUPABASE_URL}/rest/v1/trades`, {
             method: 'POST',
             headers: {
@@ -759,7 +792,7 @@
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                user_id: userId,
+                user_id: currentUserId,
                 trade_date: trade.date,
                 symbol: trade.symbol,
                 direction: trade.direction,
@@ -770,11 +803,10 @@
                 rule_checks: trade.ruleChecks
             })
         });
-        
         return response.ok;
     }
     
-    async function deleteTradeFromSupabase(tradeId) {
+    async function deleteTrade(tradeId) {
         const response = await fetch(`${SUPABASE_URL}/rest/v1/trades?id=eq.${tradeId}`, {
             method: 'DELETE',
             headers: {
@@ -783,12 +815,11 @@
                 'Content-Type': 'application/json'
             }
         });
-        
         return response.ok;
     }
     
-    async function deleteAllTradesFromSupabase(userId) {
-        const response = await fetch(`${SUPABASE_URL}/rest/v1/trades?user_id=eq.${userId}`, {
+    async function deleteAllTrades() {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/trades?user_id=eq.${currentUserId}`, {
             method: 'DELETE',
             headers: {
                 'apikey': SUPABASE_ANON_KEY,
@@ -796,13 +827,9 @@
                 'Content-Type': 'application/json'
             }
         });
-        
         return response.ok;
     }
     
-    // ============================================================
-    // RULES & UI FUNCTIONS
-    // ============================================================
     const RULES_LIST = [
         { id: "rule_entry", text: "Followed entry criteria" },
         { id: "rule_sl", text: "Set Stop Loss / TP before entry" },
@@ -857,6 +884,8 @@
         const year = currentViewDate.getFullYear();
         const month = currentViewDate.getMonth();
         const monthData = {};
+        
+        // Calculate daily totals
         currentTrades.forEach(t => {
             const d = new Date(t.date);
             if(d.getFullYear() === year && d.getMonth() === month) {
@@ -885,12 +914,20 @@
             }
             const ds = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
             const data = monthData[ds];
-            const pnl = data ? data.totalPnL : 0;
+            const totalPnL = data ? data.totalPnL : 0;
             const selected = selectedDate === ds;
-            html += `<div class="calendar-day ${selected ? 'selected' : ''}" data-date="${ds}">
+            
+            // Determine box color class based on P&L
+            let boxClass = 'no-trade-day';
+            if(data && data.count > 0) {
+                if(totalPnL > 0) boxClass = 'profit-day';
+                else if(totalPnL < 0) boxClass = 'loss-day';
+            }
+            
+            html += `<div class="calendar-day ${boxClass} ${selected ? 'selected' : ''}" data-date="${ds}">
                 <div class="day-number">${day}</div>
-                ${data ? `<div class="day-pnl ${pnl >= 0 ? 'positive' : 'negative'}">${pnl >= 0 ? '+' : ''}$${pnl.toFixed(0)}</div>
-                <div style="font-size:0.7rem;">📊 ${data.count}</div>` : '<div style="font-size:0.7rem;">No trades</div>'}
+                ${data ? `<div class="day-pnl ${totalPnL >= 0 ? 'positive' : 'negative'}">${totalPnL >= 0 ? '+' : ''}$${Math.abs(totalPnL).toFixed(0)}</div>
+                <div style="font-size:0.7rem;">📊 ${data.count}</div>` : '<div style="font-size:0.7rem; opacity:0.5;">📭 No trades</div>'}
             </div>`;
             day++;
         }
@@ -913,38 +950,46 @@
         });
     }
     
-    function renderTradesTable() {
+    async function renderTradesTable() {
         const tbody = document.getElementById('tradesBody');
         if(!currentTrades.length) {
-            tbody.innerHTML = '<tr><td colspan="8">No trades yet. Add your first trade!</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center">📭 No trades yet. Add your first trade!</td</tr>';
             return;
         }
         tbody.innerHTML = '';
-        currentTrades.slice().reverse().forEach(t => {
+        
+        for(const t of [...currentTrades].reverse()) {
             const ruleCount = Object.values(t.ruleChecks).filter(v => v === true).length;
             const adherence = calculateAdherence(t.ruleChecks);
-            tbody.innerHTML += `<tr>
+            const row = document.createElement('tr');
+            row.innerHTML = `
                 <td>${new Date(t.date).toLocaleString()}</td>
                 <td><strong>${t.symbol}</strong></td>
                 <td>${t.direction === 'Long (Buy)' ? '🟢 Long' : '🔴 Short'}</td>
                 <td>${t.entry} → ${t.exit}</td>
-                <td style="color:${Number(t.pnl) >= 0 ? '#4ade80' : '#f87171'}">${Number(t.pnl) >= 0 ? '+' : ''}$${Number(t.pnl).toFixed(2)}</td>
+                <td style="color:${Number(t.pnl) >= 0 ? '#4ade80' : '#f87171'}; font-weight:bold;">${Number(t.pnl) >= 0 ? '+' : ''}$${Math.abs(Number(t.pnl)).toFixed(2)}</td>
                 <td>${ruleCount}/${RULES_LIST.length}</td>
                 <td>${adherence}%</td>
-                <td><button class="delete-btn" data-id="${t.id}">❌</button></td>
-            </tr>`;
-        });
+                <td><button class="delete-btn" data-id="${t.id}">❌ Delete</button></td>
+            `;
+            tbody.appendChild(row);
+        }
         
         document.querySelectorAll('.delete-btn').forEach(btn => {
             btn.addEventListener('click', async (e) => {
-                const id = parseInt(btn.dataset.id);
-                const success = await deleteTradeFromSupabase(id);
-                if(success) {
-                    currentTrades = currentTrades.filter(t => t.id !== id);
-                    renderDashboard();
-                    alert('✅ Trade deleted from cloud!');
-                } else {
-                    alert('❌ Failed to delete');
+                e.preventDefault();
+                e.stopPropagation();
+                const tradeId = btn.getAttribute('data-id');
+                
+                if(confirm('Are you sure you want to delete this trade?')) {
+                    const success = await deleteTrade(tradeId);
+                    if(success) {
+                        currentTrades = currentTrades.filter(t => t.id != tradeId);
+                        await renderDashboard();
+                        alert('✅ Trade deleted successfully!');
+                    } else {
+                        alert('❌ Failed to delete trade');
+                    }
                 }
             });
         });
@@ -958,6 +1003,45 @@
         });
     }
     
+    function togglePnL() {
+        const pnlInput = document.getElementById('pnl');
+        const toggleBtn = document.getElementById('pnlToggleBtn');
+        const currentValue = parseFloat(pnlInput.value);
+        
+        if(!isNaN(currentValue) && currentValue !== 0) {
+            pnlInput.value = -currentValue;
+            pnlSign = pnlSign === 1 ? -1 : 1;
+        }
+        
+        if(pnlSign === 1 || (pnlInput.value && parseFloat(pnlInput.value) > 0)) {
+            toggleBtn.className = 'pnl-toggle-btn positive';
+            toggleBtn.innerHTML = '+ Positive';
+        } else {
+            toggleBtn.className = 'pnl-toggle-btn negative';
+            toggleBtn.innerHTML = '- Negative';
+        }
+    }
+    
+    function setupPnLMonitor() {
+        const pnlInput = document.getElementById('pnl');
+        const toggleBtn = document.getElementById('pnlToggleBtn');
+        
+        pnlInput.addEventListener('input', function() {
+            const value = parseFloat(this.value);
+            if(!isNaN(value)) {
+                if(value > 0) {
+                    toggleBtn.className = 'pnl-toggle-btn positive';
+                    toggleBtn.innerHTML = '+ Positive';
+                    pnlSign = 1;
+                } else if(value < 0) {
+                    toggleBtn.className = 'pnl-toggle-btn negative';
+                    toggleBtn.innerHTML = '- Negative';
+                    pnlSign = -1;
+                }
+            }
+        });
+    }
+    
     async function addTrade() {
         const date = document.getElementById('tradeDate').value;
         if(!date) { alert('Select date'); return; }
@@ -966,7 +1050,7 @@
         const entry = parseFloat(document.getElementById('entryPrice').value);
         const exit = parseFloat(document.getElementById('exitPrice').value);
         const size = parseFloat(document.getElementById('size').value);
-        const pnl = parseFloat(document.getElementById('pnl').value);
+        let pnl = parseFloat(document.getElementById('pnl').value);
         
         if(isNaN(entry) || isNaN(exit) || isNaN(size) || isNaN(pnl)) {
             alert('Fill all fields');
@@ -976,27 +1060,24 @@
         const ruleChecks = {};
         RULES_LIST.forEach(r => { ruleChecks[r.id] = document.getElementById(r.id).checked; });
         
-        const newTrade = {
-            date, symbol, direction, entry, exit, size, pnl, ruleChecks
-        };
+        const newTrade = { date, symbol, direction, entry, exit, size, pnl, ruleChecks };
+        const success = await saveTrade(newTrade);
         
-        const success = await saveTradeToSupabase(currentUserId, newTrade);
         if(success) {
-            currentTrades = await loadTradesFromSupabase(currentUserId);
+            currentTrades = await loadTrades();
             renderDashboard();
             document.getElementById('pnl').value = '';
             document.getElementById('entryPrice').value = '';
             document.getElementById('exitPrice').value = '';
-            alert('✅ Trade saved to cloud! Visible on all devices.');
+            document.getElementById('size').value = '';
+            const toggleBtn = document.getElementById('pnlToggleBtn');
+            toggleBtn.className = 'pnl-toggle-btn positive';
+            toggleBtn.innerHTML = '+ Positive';
+            pnlSign = 1;
+            alert('✅ Trade saved to cloud!');
         } else {
             alert('❌ Failed to save trade');
         }
-    }
-    
-    async function syncTrades() {
-        currentTrades = await loadTradesFromSupabase(currentUserId);
-        renderDashboard();
-        alert(`✅ Synced ${currentTrades.length} trades from cloud!`);
     }
     
     function calculatePositionSize() {
@@ -1019,7 +1100,6 @@
         document.getElementById('pipResult').innerHTML = `💵 Value per pip: $${valuePerPip.toFixed(2)}<br>📈 10 pips: $${(valuePerPip * 10).toFixed(2)}`;
     }
     
-    // Password toggle
     document.getElementById('togglePasswordBtn')?.addEventListener('click', function(e) {
         e.preventDefault();
         const pwd = document.getElementById('loginPassword');
@@ -1032,9 +1112,11 @@
         }
     });
     
-    // ============================================================
-    // AUTH UI
-    // ============================================================
+    document.getElementById('pnlToggleBtn')?.addEventListener('click', function(e) {
+        e.preventDefault();
+        togglePnL();
+    });
+    
     let authMode = 'login';
     
     function showAuthScreen() { document.getElementById('authScreen').style.display = 'flex'; }
@@ -1091,7 +1173,7 @@
             
             currentUser = username;
             currentUserId = result.user.id;
-            currentTrades = await loadTradesFromSupabase(currentUserId);
+            currentTrades = await loadTrades();
             
             loadingDiv.style.display = 'none';
             hideAuthScreen();
@@ -1105,10 +1187,11 @@
             now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
             document.getElementById('tradeDate').value = now.toISOString().slice(0, 16);
             buildRuleChecklist();
+            setupPnLMonitor();
             renderDashboard();
             
             setTimeout(() => {
-                alert(`✅ Welcome back! Loaded ${currentTrades.length} trades from cloud.`);
+                alert(`✅ Welcome back! Loaded ${currentTrades.length} trades.`);
             }, 500);
         }
     }
@@ -1119,11 +1202,8 @@
         currentTrades = [];
         document.getElementById('mainApp').style.display = 'none';
         showAuthScreen();
-        document.getElementById('loginUsername').value = '';
-        document.getElementById('loginPassword').value = '';
     }
     
-    // Event Listeners
     document.getElementById('profileTrigger')?.addEventListener('click', () => {
         document.getElementById('dropdownMenu').classList.toggle('show');
     });
@@ -1137,10 +1217,9 @@
     document.getElementById('authSwitch').addEventListener('click', switchAuthMode);
     document.getElementById('logoutBtn').addEventListener('click', logout);
     document.getElementById('addTradeBtn').addEventListener('click', addTrade);
-    document.getElementById('syncFromCloudBtn').addEventListener('click', syncTrades);
     document.getElementById('resetDataBtn').addEventListener('click', async () => {
         if(confirm('⚠️ Delete ALL your trades from cloud? This cannot be undone!')) {
-            const success = await deleteAllTradesFromSupabase(currentUserId);
+            const success = await deleteAllTrades();
             if(success) {
                 currentTrades = [];
                 renderDashboard();
